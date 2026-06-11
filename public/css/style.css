@@ -537,7 +537,6 @@ a:hover {
 .track-category-card {
   background: var(--card-bg);
   border: 1px solid var(--card-border);
-  border-top: 4px solid var(--psru-green); /* Full top border accent instead of side-stripe */
   border-radius: var(--radius-md);
   padding: 2.25rem 2rem;
   box-shadow: var(--shadow);
@@ -550,8 +549,7 @@ a:hover {
 .track-category-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 20px 25px -5px rgba(6, 95, 70, 0.05);
-  border-color: rgba(6, 95, 70, 0.25);
-  border-top-color: var(--psru-green);
+  border-color: var(--psru-green);
 }
 
 .category-title {
