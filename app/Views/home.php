@@ -337,19 +337,18 @@
       <div class="hero-tag">มหาวิทยาลัยราชภัฏพิบูลสงคราม • Pibulsongkram Rajabhat University</div>
       
       <?php if ($activeConf): ?>
-        <h1 class="hero-title">การประชุมวิชาการระดับชาติ ประจำปี <span>พ.ศ. <?= esc($activeConf['year']) ?></span></h1>
-        <h2 style="font-size: 1.35rem; font-weight: 600; color: #fbbf24; margin-bottom: 1.5rem; text-shadow: 0 1px 2px rgba(0,0,0,0.3);"><?= esc($activeConf['title']) ?></h2>
+        <h1 class="hero-title"><?= esc($activeConf['title']) ?></h1>
         <p class="hero-subtitle">
           ขอเชิญร่วมส่งบทความวิจัยและนำเสนอผลงานวิจัยในการประชุมวิชาการระดับชาติ ซึ่งจัดโดยเจ้าภาพหลักคือ <strong><?= esc($activeConf['host_name']) ?></strong>
         </p>
       <?php else: ?>
-        <h1 class="hero-title">งานประชุมวิชาการระดับชาติ <span>มรภ.พิบูลสงคราม</span></h1>
+        <h1 class="hero-title">การประชุมคณิตศาสตร์ <span>ครั้งที่ 16</span></h1>
         <p class="hero-subtitle">
-          เวทีแลกเปลี่ยนความรู้ทางวิชาการและนำเสนอผลงานวิจัยระดับประเทศ ในระบบจัดการบทความวิชาการอิเล็กทรอนิกส์
+          ขอเชิญร่วมส่งบทความวิจัยและนำเสนอผลงานวิจัยในการประชุมวิชาการระดับชาติ ซึ่งจัดโดยเจ้าภาพหลักคือ <strong>มหาวิทยาลัยราชภัฏพิบูลสงคราม</strong>
         </p>
       <?php endif; ?>
 
-      <div class="flex justify-center gap-2" style="flex-wrap: wrap;">
+      <div class="flex gap-2" style="flex-wrap: wrap; justify-content: center; align-items: center; width: 100%;">
         <a href="<?= base_url('auth/login'); ?>" class="btn btn-hero-gold" style="padding: 0.85rem 2rem;">📥 เข้าระบบส่งบทความ (Submission)</a>
         <a href="<?= base_url('auth/register'); ?>" class="btn btn-hero-primary" style="padding: 0.85rem 2rem;">👤 ลงทะเบียนสมัครสมาชิก</a>
       </div>
