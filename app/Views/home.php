@@ -306,7 +306,7 @@
         <h1 class="hero-title">การประชุมวิชาการระดับชาติ ประจำปี <span>พ.ศ. <?= esc($activeConf['year']) ?></span></h1>
         <h2 style="font-size: 1.35rem; font-weight: 600; color: var(--psru-green); margin-bottom: 1.5rem;"><?= esc($activeConf['title']) ?></h2>
         <p class="hero-subtitle">
-          ขอเชิญร่วมส่งบทความวิจัยและนำเสนอผลงานวิจัยในการประชุมวิชาการระดับชาติ ณ มหาวิทยาลัยราชภัฏพิบูลสงคราม โดยมีเจ้าภาพร่วมจัดงานคือ <strong><?= esc($activeConf['host_name']) ?></strong>
+          ขอเชิญร่วมส่งบทความวิจัยและนำเสนอผลงานวิจัยในการประชุมวิชาการระดับชาติ ซึ่งจัดโดยเจ้าภาพหลักคือ <strong><?= esc($activeConf['host_name']) ?></strong>
         </p>
       <?php else: ?>
         <h1 class="hero-title">งานประชุมวิชาการระดับชาติ <span>มรภ.พิบูลสงคราม</span></h1>
