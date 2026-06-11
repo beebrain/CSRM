@@ -2,9 +2,9 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>จัดการเกณฑ์ประเมิน - CSRM</title>
-  <link rel="stylesheet" href="<?= base_url('css/style.css'); ?>">
+  <link class="styles" rel="stylesheet" href="<?= base_url('css/style.css'); ?>">
 </head>
 <body>
 
@@ -14,7 +14,7 @@
       🎓 CSRM Admin (ประจำปี)
     </div>
     <div class="navbar-menu">
-      <select onchange="window.location.href='<?= base_url('admin/selectConference'); ?>/'+this.value" class="form-control" style="padding: 0.25rem 0.5rem; font-size: 0.85rem; width: auto; background: rgba(255, 255, 255, 0.08); border: 1px solid var(--card-border);">
+      <select onchange="window.location.href='<?= base_url('admin/selectConference'); ?>/'+this.value" class="form-control text-sm" style="padding: 0.25rem 0.5rem; width: auto; background: rgba(255, 255, 255, 0.08); border: 1px solid var(--card-border);">
         <?php foreach ($allowedConfs as $conf): ?>
           <option value="<?= $conf['id'] ?>" <?= $conf['id'] == $currentConfId ? 'selected' : '' ?>>ปี พ.ศ. <?= esc($conf['year']) ?></option>
         <?php endforeach; ?>
@@ -25,7 +25,7 @@
       <a href="<?= base_url('admin/rooms'); ?>" class="navbar-item">จัดห้องพรีเซนต์</a>
       <a href="<?= base_url('admin/payments'); ?>" class="navbar-item">ยืนยันเงิน</a>
       <?php if (session()->get('role') === 'superadmin'): ?>
-        <a href="<?= base_url('superadmin/dashboard'); ?>" class="btn btn-primary btn-sm" style="font-size: 0.85rem; padding: 0.5rem 1rem;">⚙️ กลับหน้า SuperAdmin</a>
+        <a href="<?= base_url('superadmin/dashboard'); ?>" class="btn btn-primary btn-sm">⚙️ กลับหน้า SuperAdmin</a>
       <?php endif; ?>
       <a href="<?= base_url('auth/logout'); ?>" class="btn btn-secondary btn-sm">ออกระบบ</a>
     </div>
@@ -73,7 +73,7 @@
                     </td>
                     <td><strong><?= esc($crit['max_score']) ?></strong> คะแนน</td>
                     <td>
-                      <a href="<?= base_url('admin/deleteCriteria/' . $crit['id']) ?>" class="btn btn-danger btn-sm" onclick="return confirm('ยืนยันที่จะลบเกณฑ์นี้?')" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">ลบ</a>
+                      <a href="<?= base_url('admin/deleteCriteria/' . $crit['id']) ?>" class="btn btn-danger btn-sm text-xs" onclick="return confirm('ยืนยันที่จะลบเกณฑ์นี้?')" style="padding: 0.25rem 0.5rem;">ลบ</a>
                     </td>
                   </tr>
                 <?php 
@@ -118,7 +118,7 @@
                     </td>
                     <td><strong><?= esc($crit['max_score']) ?></strong> คะแนน</td>
                     <td>
-                      <a href="<?= base_url('admin/deleteCriteria/' . $crit['id']) ?>" class="btn btn-danger btn-sm" onclick="return confirm('ยืนยันที่จะลบเกณฑ์นี้?')" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">ลบ</a>
+                      <a href="<?= base_url('admin/deleteCriteria/' . $crit['id']) ?>" class="btn btn-danger btn-sm text-xs" onclick="return confirm('ยืนยันที่จะลบเกณฑ์นี้?')" style="padding: 0.25rem 0.5rem;">ลบ</a>
                     </td>
                   </tr>
                 <?php 
@@ -174,13 +174,13 @@
       <!-- Save as Template Form -->
       <div class="card mb-3" style="height: fit-content; margin-top: 1.5rem;">
         <h2>💾 บันทึกเป็นแบบฟอร์มสำเร็จรูป</h2>
-        <p class="text-muted mb-3" style="font-size: 0.85rem;">บันทึกเกณฑ์ประเมินปัจจุบันของรอบนี้ เพื่อนำกลับมาใช้ใหม่ในปีอื่นๆ</p>
+        <p class="text-muted mb-3 text-sm">บันทึกเกณฑ์ประเมินปัจจุบันของรอบนี้ เพื่อนำกลับมาใช้ใหม่ในปีอื่นๆ</p>
 
         <form action="<?= base_url('admin/saveAsTemplate'); ?>" method="POST">
           <?= csrf_field(); ?>
           <div class="form-group">
             <label class="form-label" for="tmpl_round">เลือกขั้นตอนการประเมิน</label>
-            <select id="tmpl_round" name="round" class="form-control" required>
+            <select id="tmpl_round" name="round" class="form-control text-sm" required>
               <option value="1">รอบแรก: การประเมินบทความ (Peer Review)</option>
               <option value="2">รอบสอง: การนำเสนอผลงาน (Presentation)</option>
             </select>
@@ -188,33 +188,33 @@
 
           <div class="form-group">
             <label class="form-label" for="template_name">ตั้งชื่อแบบฟอร์มคะแนน</label>
-            <input type="text" id="template_name" name="template_name" class="form-control" placeholder="เช่น เกณฑ์ปี 2568, เกณฑ์มาตรฐาน สกอ." required style="font-size: 0.9rem;">
+            <input type="text" id="template_name" name="template_name" class="form-control text-sm" placeholder="เช่น เกณฑ์ปี 2568, เกณฑ์มาตรฐาน สกอ." required>
           </div>
 
-          <button type="submit" class="btn btn-secondary" style="width: 100%; margin-top: 0.5rem; background: var(--info); color: #fff; border-color: var(--info); font-size: 0.9rem;">💾 บันทึกแบบฟอร์มคะแนน</button>
+          <button type="submit" class="btn btn-secondary text-sm" style="width: 100%; margin-top: 0.5rem; background: var(--info); color: #fff; border-color: var(--info);">💾 บันทึกแบบฟอร์มคะแนน</button>
         </form>
       </div>
 
       <!-- Templates List -->
       <div class="card" style="height: fit-content; margin-top: 1.5rem;">
         <h2>📋 แบบฟอร์มคะแนนสำเร็จรูป</h2>
-        <p class="text-muted mb-3" style="font-size: 0.85rem;">รายการแบบฟอร์มที่เคยสร้างไว้ สามารถนำเข้ามาใช้ในปีปัจจุบัน</p>
+        <p class="text-muted mb-3 text-sm">รายการแบบฟอร์มที่เคยสร้างไว้ สามารถนำเข้ามาใช้ในปีปัจจุบัน</p>
 
         <?php if (empty($templates)): ?>
-          <div class="text-center text-muted" style="padding: 1.5rem 0; font-size: 0.9rem;">
+          <div class="text-center text-muted text-sm" style="padding: 1.5rem 0;">
             ยังไม่มีแบบฟอร์มสำเร็จรูปบันทึกไว้
           </div>
         <?php else: ?>
           <?php foreach ($templates as $tmpl): ?>
             <div style="border: 1px solid var(--card-border); border-radius: var(--radius-sm); padding: 1rem; margin-bottom: 1rem; background: rgba(255, 255, 255, 0.01);">
               <div class="flex justify-between align-center mb-1">
-                <strong style="font-size: 0.9rem;"><?= esc($tmpl['name']) ?></strong>
-                <span class="badge" style="font-size: 0.7rem; padding: 0.1rem 0.4rem; background: <?= $tmpl['round'] == 1 ? 'rgba(37, 99, 235, 0.1)' : 'rgba(22, 163, 74, 0.1)' ?>; color: <?= $tmpl['round'] == 1 ? 'var(--primary)' : 'var(--success)' ?>;">
+                <strong class="text-sm"><?= esc($tmpl['name']) ?></strong>
+                <span class="badge text-xs" style="padding: 0.15rem 0.5rem; background: <?= $tmpl['round'] == 1 ? 'rgba(37, 99, 235, 0.1)' : 'rgba(22, 163, 74, 0.1)' ?>; color: <?= $tmpl['round'] == 1 ? 'var(--primary)' : 'var(--success)' ?>;">
                   <?= $tmpl['round'] == 1 ? 'Peer Review' : 'Presentation' ?>
                 </span>
               </div>
               
-              <ul style="font-size: 0.8rem; padding-left: 1.25rem; color: var(--text-secondary); margin-bottom: 0.75rem; list-style-type: disc;">
+              <ul class="text-xs" style="padding-left: 1.25rem; color: var(--text-secondary); margin-bottom: 0.75rem; list-style-type: disc;">
                 <?php foreach ($tmpl['criteria'] as $tc): ?>
                   <li><?= esc($tc['criteria_name']) ?> (<?= esc($tc['max_score']) ?> คะแนน)</li>
                 <?php endforeach; ?>
@@ -224,9 +224,9 @@
                 <form action="<?= base_url('admin/importTemplate'); ?>" method="POST" style="flex: 1;" onsubmit="return confirm('คำเตือน: การนำเข้าแบบฟอร์มจะเขียนทับเกณฑ์ประเมินรอบปัจจุบันทั้งหมดของปีนี้! ยืนยันการนำเข้า?')">
                   <?= csrf_field(); ?>
                   <input type="hidden" name="template_id" value="<?= $tmpl['id'] ?>">
-                  <button type="submit" class="btn btn-success btn-sm" style="width: 100%; font-size: 0.75rem; padding: 0.25rem 0.5rem;">📥 นำไปใช้ในปีนี้</button>
+                  <button type="submit" class="btn btn-success btn-sm text-xs" style="width: 100%; padding: 0.25rem 0.5rem;">📥 นำไปใช้ในปีนี้</button>
                 </form>
-                <a href="<?= base_url('admin/deleteTemplate/' . $tmpl['id']) ?>" class="btn btn-danger btn-sm" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;" onclick="return confirm('ยืนยันลบแบบฟอร์มสำเร็จรูปนี้?')">ลบ</a>
+                <a href="<?= base_url('admin/deleteTemplate/' . $tmpl['id']) ?>" class="btn btn-danger btn-sm text-xs" style="padding: 0.25rem 0.5rem;" onclick="return confirm('ยืนยันลบแบบฟอร์มสำเร็จรูปนี้?')">ลบ</a>
               </div>
             </div>
           <?php endforeach; ?>

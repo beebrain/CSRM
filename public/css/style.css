@@ -781,3 +781,301 @@ footer {
     top: 0;
   }
 }
+
+/* ==========================================
+   ADMIN AND SUPERADMIN CORE TYPOGRAPHY & UTILITIES
+   ========================================== */
+
+/* Typography Scale */
+h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+}
+
+h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.text-xs { font-size: 0.75rem !important; }
+.text-sm { font-size: 0.875rem !important; }
+.text-base { font-size: 1rem !important; }
+.text-lg { font-size: 1.125rem !important; }
+.text-xl { font-size: 1.25rem !important; }
+.text-2xl { font-size: 1.5rem !important; }
+.text-3xl { font-size: 2rem !important; }
+
+/* Grid & Layout overrides for Admin Stats */
+.grid-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  padding: 1.5rem;
+  border-radius: var(--radius-md);
+  text-align: center;
+}
+
+.stat-val {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-top: 0.5rem;
+}
+
+.reviewer-badge {
+  display: inline-block;
+  margin: 0.15rem;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.75rem;
+  border-radius: 4px;
+}
+
+/* Premium DataTable Overrides */
+.dataTables_wrapper .dataTables_length, 
+.dataTables_wrapper .dataTables_filter, 
+.dataTables_wrapper .dataTables_info, 
+.dataTables_wrapper .dataTables_paginate {
+  color: var(--text-secondary) !important;
+  font-size: 0.85rem;
+  margin-top: 1.25rem;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+  border-radius: var(--radius-sm) !important;
+  border: 1px solid var(--card-border) !important;
+  background: #ffffff !important;
+  color: var(--text-primary) !important;
+  padding: 0.35rem 0.75rem !important;
+  margin-left: 0.25rem !important;
+  transition: var(--transition);
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current, 
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+  background: var(--primary-gradient) !important;
+  color: #ffffff !important;
+  border-color: var(--primary) !important;
+  box-shadow: 0 4px 12px rgba(6, 95, 70, 0.15) !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+table.dataTable {
+  border-collapse: collapse !important;
+  border-spacing: 0;
+  width: 100% !important;
+  margin: 1.5rem 0 !important;
+  border: 1px solid var(--card-border) !important;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+table.dataTable thead th {
+  background: #f8fafc !important;
+  color: var(--text-secondary) !important;
+  font-weight: 600 !important;
+  font-size: 0.85rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  border-bottom: 2px solid var(--card-border) !important;
+}
+
+table.dataTable th, table.dataTable td {
+  padding: 1rem 1.25rem !important;
+  border-bottom: 1px solid var(--card-border) !important;
+}
+
+table.dataTable.no-footer {
+  border-bottom: 1px solid var(--card-border) !important;
+}
+
+table.dataTable tbody tr {
+  background-color: #ffffff !important;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+table.dataTable tbody tr:hover {
+  background-color: rgba(6, 95, 70, 0.02) !important;
+}
+
+.dataTables_filter {
+  display: none !important; /* Hide default search bar since we have a custom one */
+}
+
+/* Modal Styles */
+.modal-content {
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+
+#modal-body {
+  overflow-y: auto;
+  max-height: 75vh;
+  padding-right: 0.5rem;
+}
+
+/* Loading Spinner */
+.spinner {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(0,0,0,0.05);
+  border-radius: 50%;
+  border-top-color: var(--primary);
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Payments View Specific Styles */
+.slip-thumbnail {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--card-border);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.slip-thumbnail:hover {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(6, 95, 70, 0.2);
+}
+
+/* Room Management View Specific Styles */
+.room-card {
+  margin-bottom: 2rem;
+  border-top: 4px solid var(--primary);
+}
+
+.assignment-box {
+  padding: 1rem;
+  margin-top: 1rem;
+  border-radius: var(--radius-sm);
+}
+
+.assignment-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--card-border);
+  padding-bottom: 0.25rem;
+  margin-bottom: 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Superadmin specific links */
+.quick-tool-link {
+  font-size: 0.72rem;
+  padding: 0.2rem 0.5rem;
+  background: rgba(6, 95, 70, 0.05);
+  border: 1px solid rgba(6, 95, 70, 0.12);
+  border-radius: 4px;
+  color: var(--primary);
+  font-weight: 500;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.quick-tool-link:hover {
+  background: var(--primary);
+  color: #ffffff;
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}
+
+/* Switch & Toggle Slider */
+.switch-group {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-sm);
+  padding: 1rem 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.switch-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+}
+
+.switch-item:not(:last-child) {
+  border-bottom: 1px dashed var(--card-border);
+}
+
+.toggle-control {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 26px;
+}
+
+.toggle-control input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #cbd5e1;
+  transition: .4s;
+  border-radius: 34px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: var(--primary);
+}
+
+input:checked + .slider:before {
+  transform: translateX(24px);
+}
+

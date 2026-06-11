@@ -2,67 +2,9 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>แก้ไขรอบปีการประชุม - CSRM</title>
-  <link rel="stylesheet" href="<?= base_url('css/style.css'); ?>">
-  <style>
-    .switch-group {
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius-sm);
-      padding: 1rem 1.5rem;
-      margin-bottom: 1.5rem;
-    }
-    .switch-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0.75rem 0;
-    }
-    .switch-item:not(:last-child) {
-      border-bottom: 1px dashed var(--card-border);
-    }
-    /* Simple custom toggle styling */
-    .toggle-control {
-      position: relative;
-      display: inline-block;
-      width: 50px;
-      height: 26px;
-    }
-    .toggle-control input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
-    .slider {
-      position: absolute;
-      cursor: pointer;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: #cbd5e1;
-      transition: .4s;
-      border-radius: 34px;
-    }
-    .slider:before {
-      position: absolute;
-      content: "";
-      height: 18px;
-      width: 18px;
-      left: 4px;
-      bottom: 4px;
-      background-color: white;
-      transition: .4s;
-      border-radius: 50%;
-    }
-    input:checked + .slider {
-      background-color: var(--primary);
-    }
-    input:checked + .slider:before {
-      transform: translateX(24px);
-    }
-  </style>
+  <link class="styles" rel="stylesheet" href="<?= base_url('css/style.css'); ?>">
 </head>
 <body>
 
@@ -107,15 +49,15 @@
           <textarea id="description" name="description" class="form-control" rows="3"><?= esc($conference['description']) ?></textarea>
         </div>
 
-        <h3 class="mb-2" style="font-size: 1.1rem; color: var(--text-primary);">⚙️ การจัดการช่วงการจัดงาน</h3>
-        <p class="text-muted mb-3" style="font-size: 0.85rem;">เปิดหรือปิดการดำเนินการในขั้นตอนต่างๆ ของบทความวิชาการ</p>
+        <h3 class="mb-2">⚙️ การจัดการช่วงการจัดงาน</h3>
+        <p class="text-muted mb-3 text-sm">เปิดหรือปิดการดำเนินการในขั้นตอนต่างๆ ของบทความวิชาการ</p>
 
         <div class="switch-group">
           <!-- 1. Submission Phase -->
           <div class="switch-item">
             <div>
               <strong>📥 การรับบทความ</strong>
-              <div class="text-muted" style="font-size: 0.8rem;">ผู้แต่ง (Author) จะสามารถส่งบทความวิชาการใหม่เข้าระบบได้</div>
+              <div class="text-muted text-xs">ผู้แต่ง (Author) จะสามารถส่งบทความวิชาการใหม่เข้าระบบได้</div>
             </div>
             <label class="toggle-control">
               <input type="checkbox" name="accept_submissions" value="1" <?= $conference['accept_submissions'] ? 'checked' : '' ?>>
@@ -127,7 +69,7 @@
           <div class="switch-item">
             <div>
               <strong>🔍 การประเมินบทความ</strong>
-              <div class="text-muted" style="font-size: 0.8rem;">ผู้ทรงคุณวุฒิ (Reviewer) จะสามารถทำการประเมินและส่งผลการประเมินได้</div>
+              <div class="text-muted text-xs">ผู้ทรงคุณวุฒิ (Reviewer) จะสามารถทำการประเมินและส่งผลการประเมินได้</div>
             </div>
             <label class="toggle-control">
               <input type="checkbox" name="accept_evaluations" value="1" <?= $conference['accept_evaluations'] ? 'checked' : '' ?>>
@@ -139,7 +81,7 @@
           <div class="switch-item">
             <div>
               <strong>💯 การให้คะแนนนำเสนอ</strong>
-              <div class="text-muted" style="font-size: 0.8rem;">กรรมการห้องพรีเซนต์ (Committee) จะสามารถให้คะแนนการนำเสนอผลงานได้</div>
+              <div class="text-muted text-xs">กรรมการห้องพรีเซนต์ (Committee) จะสามารถให้คะแนนการนำเสนอผลงานได้</div>
             </div>
             <label class="toggle-control">
               <input type="checkbox" name="accept_grading" value="1" <?= $conference['accept_grading'] ? 'checked' : '' ?>>

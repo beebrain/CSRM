@@ -2,33 +2,9 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>จัดห้องนำเสนอและกรรมการ - CSRM</title>
-  <link rel="stylesheet" href="<?= base_url('css/style.css'); ?>">
-  <style>
-    .room-card {
-      margin-bottom: 2rem;
-      border-left: 4px solid var(--primary);
-    }
-    .assignment-box {
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius-sm);
-      padding: 1rem;
-      margin-top: 1rem;
-    }
-    .assignment-title {
-      font-weight: 600;
-      font-size: 0.95rem;
-      color: var(--text-secondary);
-      border-bottom: 1px solid var(--card-border);
-      padding-bottom: 0.25rem;
-      margin-bottom: 0.75rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-  </style>
+  <link class="styles" rel="stylesheet" href="<?= base_url('css/style.css'); ?>">
 </head>
 <body>
 
@@ -38,7 +14,7 @@
       🎓 CSRM Admin (ประจำปี)
     </div>
     <div class="navbar-menu">
-      <select onchange="window.location.href='<?= base_url('admin/selectConference'); ?>/'+this.value" class="form-control" style="padding: 0.25rem 0.5rem; font-size: 0.85rem; width: auto; background: rgba(255, 255, 255, 0.08); border: 1px solid var(--card-border);">
+      <select onchange="window.location.href='<?= base_url('admin/selectConference'); ?>/'+this.value" class="form-control text-sm" style="padding: 0.25rem 0.5rem; width: auto; background: rgba(255, 255, 255, 0.08); border: 1px solid var(--card-border);">
         <?php foreach ($allowedConfs as $conf): ?>
           <option value="<?= $conf['id'] ?>" <?= $conf['id'] == $currentConfId ? 'selected' : '' ?>>ปี พ.ศ. <?= esc($conf['year']) ?></option>
         <?php endforeach; ?>
@@ -49,7 +25,7 @@
       <a href="<?= base_url('admin/rooms'); ?>" class="navbar-item active">จัดห้องพรีเซนต์</a>
       <a href="<?= base_url('admin/payments'); ?>" class="navbar-item">ยืนยันเงิน</a>
       <?php if (session()->get('role') === 'superadmin'): ?>
-        <a href="<?= base_url('superadmin/dashboard'); ?>" class="btn btn-primary btn-sm" style="font-size: 0.85rem; padding: 0.5rem 1rem;">⚙️ กลับหน้า SuperAdmin</a>
+        <a href="<?= base_url('superadmin/dashboard'); ?>" class="btn btn-primary btn-sm">⚙️ กลับหน้า SuperAdmin</a>
       <?php endif; ?>
       <a href="<?= base_url('auth/logout'); ?>" class="btn btn-secondary btn-sm">ออกระบบ</a>
     </div>
@@ -69,7 +45,7 @@
       
       <!-- Left: Create Room Form -->
       <div class="card" style="height: fit-content;">
-        <h2>➕ สร้างห้องนำเสนอผลงาน</h2>
+        <h2 class="text-2xl">➕ สร้างห้องนำเสนอผลงาน</h2>
         <p class="text-muted mb-3">สร้างห้องสำหรับเสนอผลงานในรอบที่สอง</p>
 
         <form action="<?= base_url('admin/createRoom'); ?>" method="POST">
@@ -97,7 +73,7 @@
       <div>
         <?php if (empty($rooms)): ?>
           <div class="card text-center text-muted" style="padding: 3rem;">
-            <h3>ยังไม่มีการสร้างห้องนำเสนอผลงาน</h3>
+            <h3 class="text-xl">ยังไม่มีการสร้างห้องนำเสนอผลงาน</h3>
             <p>กรุณาสร้างห้องนำเสนอที่กล่องควบคุมฝั่งซ้ายมือ</p>
           </div>
         <?php else: ?>
@@ -105,10 +81,10 @@
             <div class="card room-card">
               <div class="flex justify-between align-center mb-2">
                 <div>
-                  <h2 style="color: var(--primary);"><?= esc($room['name']) ?></h2>
+                  <h2 class="text-xl" style="color: var(--primary);"><?= esc($room['name']) ?></h2>
                   <small class="text-muted">สถานที่: <strong><?= esc($room['location']) ?></strong> | วันเวลา: <?= esc($room['date_time']) ?></small>
                 </div>
-                <a href="<?= base_url('admin/deleteRoom/' . $room['id']) ?>" class="btn btn-danger btn-sm" onclick="return confirm('ยืนยันลบห้องและถอนการจัดสรรทั้งหมด?')" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">ลบห้อง</a>
+                <a href="<?= base_url('admin/deleteRoom/' . $room['id']) ?>" class="btn btn-danger btn-sm text-xs" onclick="return confirm('ยืนยันลบห้องและถอนการจัดสรรทั้งหมด?')" style="padding: 0.25rem 0.5rem;">ลบห้อง</a>
               </div>
 
               <div class="grid-2">
@@ -121,15 +97,15 @@
                   <!-- List of assigned committees -->
                   <ul class="mb-2" style="list-style: none;">
                     <?php if (empty($roomDetails[$room['id']]['committees'])): ?>
-                      <li class="text-muted text-center" style="font-size: 0.85rem; padding: 0.5rem 0;">ยังไม่มีกรรมการประจำห้อง</li>
+                      <li class="text-muted text-center text-sm" style="padding: 0.5rem 0;">ยังไม่มีกรรมการประจำห้อง</li>
                     <?php else: ?>
                       <?php foreach ($roomDetails[$room['id']]['committees'] as $c): ?>
-                        <li class="flex justify-between align-center mb-1" style="font-size: 0.9rem; background: rgba(255, 255, 255, 0.02); padding: 0.25rem 0.5rem; border-radius: 4px;">
+                        <li class="flex justify-between align-center mb-1 text-sm" style="background: rgba(255, 255, 255, 0.02); padding: 0.25rem 0.5rem; border-radius: 4px;">
                           <div>
                             <strong><?= esc($c['first_name']) ?></strong>
-                            <div style="font-size: 0.7rem;" class="text-muted"><?= esc($c['email']) ?></div>
+                            <div class="text-muted text-xs"><?= esc($c['email']) ?></div>
                           </div>
-                          <a href="<?= base_url('admin/removeCommittee/' . $c['assignment_id']) ?>" style="color: var(--danger); font-size: 0.75rem; font-weight: 600;">ถอน</a>
+                          <a href="<?= base_url('admin/removeCommittee/' . $c['assignment_id']) ?>" class="text-xs" style="color: var(--danger); font-weight: 600;">ถอน</a>
                         </li>
                       <?php endforeach; ?>
                     <?php endif; ?>
@@ -139,13 +115,13 @@
                   <form action="<?= base_url('admin/assignCommittee'); ?>" method="POST" class="flex gap-1">
                     <?= csrf_field(); ?>
                     <input type="hidden" name="room_id" value="<?= $room['id'] ?>">
-                    <select name="committee_id" class="form-control" style="font-size: 0.8rem; padding: 0.25rem;" required>
+                    <select name="committee_id" class="form-control text-xs" style="padding: 0.25rem;" required>
                       <option value="">+ เลือกกรรมการ</option>
                       <?php foreach ($committees as $comm): ?>
                         <option value="<?= $comm['id'] ?>"><?= esc($comm['first_name']) ?></option>
                       <?php endforeach; ?>
                     </select>
-                    <button type="submit" class="btn btn-primary btn-sm" style="font-size: 0.8rem; padding: 0.25rem 0.5rem;">เพิ่ม</button>
+                    <button type="submit" class="btn btn-primary btn-sm text-xs" style="padding: 0.25rem 0.5rem;">เพิ่ม</button>
                   </form>
                 </div>
 
@@ -158,15 +134,15 @@
                   <!-- List of assigned papers -->
                   <ul class="mb-2" style="list-style: none;">
                     <?php if (empty($roomDetails[$room['id']]['papers'])): ?>
-                      <li class="text-muted text-center" style="font-size: 0.85rem; padding: 0.5rem 0;">ยังไม่มีบทความนำเสนอในห้องนี้</li>
+                      <li class="text-muted text-center text-sm" style="padding: 0.5rem 0;">ยังไม่มีบทความนำเสนอในห้องนี้</li>
                     <?php else: ?>
                       <?php foreach ($roomDetails[$room['id']]['papers'] as $p): ?>
-                        <li class="flex justify-between align-center mb-1" style="font-size: 0.9rem; background: rgba(255, 255, 255, 0.02); padding: 0.25rem 0.5rem; border-radius: 4px;">
+                        <li class="flex justify-between align-center mb-1 text-sm" style="background: rgba(255, 255, 255, 0.02); padding: 0.25rem 0.5rem; border-radius: 4px;">
                           <div style="max-width: 80%;">
                             <div style="font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><?= esc($p['title']) ?></div>
                             <small class="text-muted">ผู้นำเสนอ: <?= esc($p['author_first']) ?> | เวลา: <strong><?= esc($p['presentation_time']) ?></strong></small>
                           </div>
-                          <a href="<?= base_url('admin/removePaper/' . $p['assignment_id']) ?>" style="color: var(--danger); font-size: 0.75rem; font-weight: 600;">ถอน</a>
+                          <a href="<?= base_url('admin/removePaper/' . $p['assignment_id']) ?>" class="text-xs" style="color: var(--danger); font-weight: 600;">ถอน</a>
                         </li>
                       <?php endforeach; ?>
                     <?php endif; ?>
@@ -178,7 +154,7 @@
                     <input type="hidden" name="room_id" value="<?= $room['id'] ?>">
                     
                     <div class="flex gap-1 mb-1">
-                      <select name="paper_id" class="form-control" style="font-size: 0.8rem; padding: 0.25rem;" required>
+                      <select name="paper_id" class="form-control text-xs" style="padding: 0.25rem;" required>
                         <option value="">+ จัดบทความเข้าห้อง</option>
                         <?php foreach ($papers as $paper): ?>
                           <option value="<?= $paper['id'] ?>"><?= esc($paper['title']) ?> (<?= esc($paper['author_first_name']) ?>)</option>
@@ -186,8 +162,8 @@
                       </select>
                     </div>
                     <div class="flex gap-1">
-                      <input type="time" name="presentation_time" class="form-control" style="font-size: 0.8rem; padding: 0.25rem;" required>
-                      <button type="submit" class="btn btn-primary btn-sm" style="font-size: 0.8rem; padding: 0.25rem 0.5rem; white-space: nowrap;">จัดสรร</button>
+                      <input type="time" name="presentation_time" class="form-control text-xs" style="padding: 0.25rem;" required>
+                      <button type="submit" class="btn btn-primary btn-sm text-xs" style="padding: 0.25rem 0.5rem; white-space: nowrap;">จัดสรร</button>
                     </div>
                   </form>
                 </div>

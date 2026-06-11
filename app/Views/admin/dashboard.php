@@ -2,42 +2,13 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Admin Dashboard - CSRM</title>
-  <link rel="stylesheet" href="<?= base_url('css/style.css'); ?>">
+  <link class="styles" rel="stylesheet" href="<?= base_url('css/style.css'); ?>">
   <!-- DataTables & jQuery CDN -->
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
   <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
   <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-  <style>
-    .grid-stats {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 1.5rem;
-      margin-bottom: 2rem;
-    }
-    .stat-card {
-      padding: 1.25rem;
-      border-radius: var(--radius-md);
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--card-border);
-      text-align: center;
-    }
-    .stat-val {
-      font-size: 1.75rem;
-      font-weight: 700;
-      color: var(--primary);
-      margin-top: 0.25rem;
-    }
-    .reviewer-badge {
-      display: inline-block;
-      margin: 0.15rem;
-      padding: 0.2rem 0.5rem;
-      font-size: 0.75rem;
-      border-radius: 4px;
-      background: rgba(255, 255, 255, 0.05);
-    }
-  </style>
 </head>
 <body>
 
@@ -161,98 +132,6 @@
     </div>
 
                 <!-- Papers List grouped by Track (Accordion List) -->
-    <style>
-      /* Premium DataTable Overrides */
-      .dataTables_wrapper .dataTables_length, 
-      .dataTables_wrapper .dataTables_filter, 
-      .dataTables_wrapper .dataTables_info, 
-      .dataTables_wrapper .dataTables_paginate {
-          color: var(--text-secondary) !important;
-          font-size: 0.85rem;
-          margin-top: 1.25rem;
-      }
-      .dataTables_wrapper .dataTables_paginate .paginate_button {
-          border-radius: var(--radius-sm) !important;
-          border: 1px solid var(--card-border) !important;
-          background: #ffffff !important;
-          color: var(--text-primary) !important;
-          padding: 0.35rem 0.75rem !important;
-          margin-left: 0.25rem !important;
-          transition: var(--transition);
-      }
-      .dataTables_wrapper .dataTables_paginate .paginate_button.current, 
-      .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
-          background: var(--primary-gradient) !important;
-          color: #ffffff !important;
-          border-color: var(--primary) !important;
-          box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15) !important;
-      }
-      .dataTables_wrapper .dataTables_paginate .paginate_button.disabled {
-          opacity: 0.5;
-          cursor: default;
-      }
-      table.dataTable {
-          border-collapse: collapse !important;
-          border-spacing: 0;
-          width: 100% !important;
-          margin: 1.5rem 0 !important;
-          border: 1px solid var(--card-border) !important;
-          border-radius: var(--radius-sm);
-          overflow: hidden;
-      }
-      table.dataTable thead th {
-          background: #f8fafc !important;
-          color: var(--text-secondary) !important;
-          font-weight: 600 !important;
-          font-size: 0.85rem !important;
-          text-transform: uppercase !important;
-          letter-spacing: 0.05em !important;
-          border-bottom: 2px solid var(--card-border) !important;
-      }
-      table.dataTable th, table.dataTable td {
-          padding: 1rem 1.25rem !important;
-          border-bottom: 1px solid var(--card-border) !important;
-      }
-      table.dataTable.no-footer {
-          border-bottom: 1px solid var(--card-border) !important;
-      }
-      table.dataTable tbody tr {
-          background-color: #ffffff !important;
-          cursor: pointer;
-          transition: var(--transition);
-      }
-      table.dataTable tbody tr:hover {
-          background-color: rgba(37, 99, 235, 0.02) !important;
-      }
-      .dataTables_filter {
-          display: none !important; /* Hide default search bar since we have a custom one */
-      }
-      
-      /* Modal Styles */
-      .modal-content {
-          max-height: 90vh;
-          display: flex;
-          flex-direction: column;
-      }
-      #modal-body {
-          overflow-y: auto;
-          max-height: 75vh;
-          padding-right: 0.5rem;
-      }
-      /* Loading Spinner */
-      .spinner {
-          display: inline-block;
-          width: 40px;
-          height: 40px;
-          border: 4px solid rgba(0,0,0,0.05);
-          border-radius: 50%;
-          border-top-color: var(--primary);
-          animation: spin 1s ease-in-out infinite;
-      }
-      @keyframes spin {
-          to { transform: rotate(360deg); }
-      }
-    </style>
 
     <!-- Papers List (DataTable) -->
     <div class="card">
