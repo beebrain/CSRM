@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Models;
+
+use CodeIgniter\Model;
+
+class ExpertiseModel extends Model
+{
+    protected $table            = 'user_expertise';
+    protected $primaryKey       = 'id';
+    protected $useAutoIncrement = true;
+    protected $returnType       = 'array';
+    protected $allowedFields    = ['user_id', 'keyword'];
+}

@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -iA4 -B1 \"synology\\\\|nas\\\\|diskstation\")",
+      "Bash(ssh -o ConnectTimeout=8 -o BatchMode=yes obeynas2 'echo CONNECTED; uname -a; which docker; echo \"---\"; ls -d /volume*/docker/CSRM 2>/dev/null; ls -d /volume*/docker/csrm* 2>/dev/null; find /volume1 -maxdepth 3 -iname \"CSRM\" -type d 2>/dev/null | head')",
+      "Bash(ssh obeynas2 *)"
+    ]
+  }
+}
