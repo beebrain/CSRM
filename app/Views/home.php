@@ -24,59 +24,88 @@
         radial-gradient(at 100% 100%, rgba(217, 119, 6, 0.05) 0px, transparent 50%);
     }
 
-    /* Hero Section styling */
+    /* Hero Section styling with Image Background & Overlay */
     .hero-section {
-      text-align: center;
-      padding: 6rem 1.5rem 4rem 1.5rem;
       position: relative;
-      margin-bottom: 2rem;
+      text-align: center;
+      padding: 6.5rem 2rem;
+      margin-bottom: 3rem;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      background-image: 
+        linear-gradient(135deg, rgba(6, 95, 70, 0.88) 0%, rgba(15, 23, 42, 0.95) 100%),
+        url('<?= base_url("images/conference_hero_banner.png"); ?>');
+      background-size: cover;
+      background-position: center;
+      border: 1px solid rgba(6, 95, 70, 0.25);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      color: #ffffff;
     }
     
-    .hero-glow {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 350px;
-      height: 350px;
-      background: radial-gradient(circle, rgba(16, 185, 129, 0.08) 0%, transparent 70%);
-      pointer-events: none;
-      z-index: -1;
-    }
-
     .hero-tag {
       display: inline-block;
-      padding: 0.35rem 1rem;
-      background: rgba(6, 95, 70, 0.08);
-      border: 1px solid rgba(6, 95, 70, 0.15);
-      color: var(--psru-green);
+      padding: 0.35rem 1.2rem;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fcd34d; /* Bright gold/amber for high contrast */
       font-weight: 600;
       font-size: 0.85rem;
       border-radius: 9999px;
       margin-bottom: 1.5rem;
       text-transform: uppercase;
+      letter-spacing: 0.05em;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
     }
 
     .hero-title {
       font-size: 3rem;
       font-weight: 800;
       line-height: 1.2;
-      color: var(--text-primary);
-      margin-bottom: 1rem;
+      color: #ffffff;
+      margin-bottom: 1.25rem;
       letter-spacing: -0.02em;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     }
 
     .hero-title span {
-      /* Impeccable constraint: No gradient text. Use a solid brand color. */
-      color: var(--psru-gold);
+      color: #fbbf24; /* Bright amber gold for dark background */
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     }
 
     .hero-subtitle {
       font-size: 1.25rem;
-      color: var(--text-secondary);
+      color: #f1f5f9; /* Slate-100 for high readability on dark overlay */
       max-width: 750px;
       margin: 0 auto 2.5rem auto;
-      line-height: 1.7;
+      line-height: 1.8;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Hero Buttons */
+    .btn-hero-primary {
+      background: var(--primary-gradient);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 4px 12px rgba(6, 95, 70, 0.3);
+    }
+    .btn-hero-primary:hover {
+      background: #047857;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(6, 95, 70, 0.45);
+    }
+
+    .btn-hero-gold {
+      background: #fbbf24;
+      color: #0f172a;
+      border: 1px solid #d97706;
+      font-weight: 700;
+      box-shadow: 0 4px 12px rgba(251, 191, 36, 0.2);
+    }
+    .btn-hero-gold:hover {
+      background: #f59e0b;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(245, 158, 11, 0.4);
     }
 
     /* Button adjustments with WCAG AA compliance (dark slate text on gold) */
@@ -305,17 +334,11 @@
 
     <!-- Hero Section -->
     <header class="hero-section animate-fade-in" style="animation-delay: 0.1s;">
-      <div class="hero-glow"></div>
       <div class="hero-tag">มหาวิทยาลัยราชภัฏพิบูลสงคราม • Pibulsongkram Rajabhat University</div>
-      
-      <!-- Banner Image -->
-      <div class="hero-banner-container" style="max-width: 800px; margin: 0 auto 2.5rem auto; border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--card-border); box-shadow: var(--shadow);">
-        <img src="<?= base_url('images/conference_hero_banner.png'); ?>" alt="CSRM Conference Banner" style="width: 100%; height: auto; display: block;">
-      </div>
       
       <?php if ($activeConf): ?>
         <h1 class="hero-title">การประชุมวิชาการระดับชาติ ประจำปี <span>พ.ศ. <?= esc($activeConf['year']) ?></span></h1>
-        <h2 style="font-size: 1.35rem; font-weight: 600; color: var(--psru-green); margin-bottom: 1.5rem;"><?= esc($activeConf['title']) ?></h2>
+        <h2 style="font-size: 1.35rem; font-weight: 600; color: #fbbf24; margin-bottom: 1.5rem; text-shadow: 0 1px 2px rgba(0,0,0,0.3);"><?= esc($activeConf['title']) ?></h2>
         <p class="hero-subtitle">
           ขอเชิญร่วมส่งบทความวิจัยและนำเสนอผลงานวิจัยในการประชุมวิชาการระดับชาติ ซึ่งจัดโดยเจ้าภาพหลักคือ <strong><?= esc($activeConf['host_name']) ?></strong>
         </p>
@@ -327,8 +350,8 @@
       <?php endif; ?>
 
       <div class="flex justify-center gap-2" style="flex-wrap: wrap;">
-        <a href="<?= base_url('auth/login'); ?>" class="btn btn-primary" style="padding: 0.85rem 2rem;">📥 เข้าระบบส่งบทความ (Submission)</a>
-        <a href="<?= base_url('auth/register'); ?>" class="btn btn-gold" style="padding: 0.85rem 2rem;">👤 ลงทะเบียนสมัครสมาชิก</a>
+        <a href="<?= base_url('auth/login'); ?>" class="btn btn-hero-gold" style="padding: 0.85rem 2rem;">📥 เข้าระบบส่งบทความ (Submission)</a>
+        <a href="<?= base_url('auth/register'); ?>" class="btn btn-hero-primary" style="padding: 0.85rem 2rem;">👤 ลงทะเบียนสมัครสมาชิก</a>
       </div>
     </header>
 
