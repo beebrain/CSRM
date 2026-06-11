@@ -108,8 +108,15 @@ class SimulationSeeder extends Seeder
             $paymentOptions = ['unpaid', 'pending_verification', 'paid'];
             $paymentStatus = $paymentOptions[$i % count($paymentOptions)];
 
+            // Get active conference ID dynamically, fallback to first conference, then to 1
+            $activeConf = $db->query("SELECT id FROM conferences WHERE is_active = 1 LIMIT 1")->getRow();
+            if (!$activeConf) {
+                $activeConf = $db->query("SELECT id FROM conferences LIMIT 1")->getRow();
+            }
+            $conferenceId = $activeConf ? $activeConf->id : 1;
+
             $paperData = [
-                'conference_id' => 1, // Active conference ID
+                'conference_id' => $conferenceId,
                 'title' => $title,
                 'abstract' => $abstract,
                 'file_path' => "uploads/papers/mock_paper_" . ($i + 1) . ".pdf",
