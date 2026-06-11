@@ -25,6 +25,25 @@
       color: var(--primary);
       margin: 0.5rem 0;
     }
+    .quick-tool-link {
+      font-size: 0.72rem;
+      padding: 0.2rem 0.5rem;
+      background: rgba(37, 99, 235, 0.05);
+      border: 1px solid rgba(37, 99, 235, 0.12);
+      border-radius: 4px;
+      color: var(--primary);
+      font-weight: 500;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.15rem;
+    }
+    .quick-tool-link:hover {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+      transform: translateY(-1px);
+    }
   </style>
 </head>
 <body>
@@ -137,8 +156,18 @@
                   <tr>
                     <td><strong><?= esc($conf['year']) ?></strong></td>
                     <td>
-                      <div><?= esc($conf['title']) ?></div>
-                      <small class="text-muted">เจ้าภาพ: <?= esc($conf['host_name']) ?></small>
+                      <div style="font-weight: 600;"><?= esc($conf['title']) ?></div>
+                      <small class="text-muted" style="display: block; margin-bottom: 0.5rem;">เจ้าภาพ: <?= esc($conf['host_name']) ?></small>
+                      
+                      <!-- Quick Admin Tools Link -->
+                      <div class="quick-tools-grid" style="display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.5rem; border-top: 1px dashed var(--card-border); padding-top: 0.5rem;">
+                        <span style="font-size: 0.7rem; color: var(--text-secondary); width: 100%; font-weight: 500; display: block; margin-bottom: 0.15rem;">🛠️ เครื่องมือจัดการแอดมิน:</span>
+                        <a href="<?= base_url('admin/selectConference/' . $conf['id'] . '?redirect=admin/dashboard') ?>" class="quick-tool-link" title="จัดการบทความ">📝 บทความ</a>
+                        <a href="<?= base_url('admin/selectConference/' . $conf['id'] . '?redirect=admin/disciplines') ?>" class="quick-tool-link" title="จัดการศาสตร์ย่อย">📚 ศาสตร์ย่อย</a>
+                        <a href="<?= base_url('admin/selectConference/' . $conf['id'] . '?redirect=admin/criteria') ?>" class="quick-tool-link" title="จัดการเกณฑ์ประเมิน">🎯 เกณฑ์</a>
+                        <a href="<?= base_url('admin/selectConference/' . $conf['id'] . '?redirect=admin/rooms') ?>" class="quick-tool-link" title="จัดห้องนำเสนอ">🏫 จัดห้อง</a>
+                        <a href="<?= base_url('admin/selectConference/' . $conf['id'] . '?redirect=admin/payments') ?>" class="quick-tool-link" title="ตรวจสอบเงิน">💳 ยืนยันเงิน</a>
+                      </div>
                     </td>
                     <td>
                       <div class="mb-1">

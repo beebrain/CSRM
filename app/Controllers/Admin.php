@@ -81,6 +81,10 @@ class Admin extends BaseController
 
         if ($allowed) {
             session()->set('admin_conference_id', $id);
+            $redirect = $this->request->getGet('redirect');
+            if ($redirect && in_array($redirect, ['admin/dashboard', 'admin/disciplines', 'admin/criteria', 'admin/rooms', 'admin/payments'])) {
+                return redirect()->to(base_url($redirect));
+            }
         }
 
         return redirect()->to(base_url('admin/dashboard'));
