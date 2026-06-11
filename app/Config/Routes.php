@@ -23,6 +23,7 @@ $routes->group('superadmin', function($routes) {
     $routes->post('assignAdmin', 'SuperAdmin::assignAdmin');
     $routes->get('removeAdmin/(:num)', 'SuperAdmin::removeAdmin/$1');
     $routes->get('deleteConference/(:num)', 'SuperAdmin::deleteConference/$1');
+    $routes->match(['get', 'post'], 'editConference/(:num)', 'SuperAdmin::editConference/$1');
 });
 
 // Admin Routes

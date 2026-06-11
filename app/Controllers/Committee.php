@@ -23,7 +23,7 @@ class Committee extends BaseController
 
         // Fetch rooms where this committee is assigned
         $rooms = $db->table('room_committees')
-                    ->select('rooms.*, conferences.year as conference_year, conferences.host_name')
+                    ->select('rooms.*, conferences.year as conference_year, conferences.host_name, conferences.accept_grading')
                     ->join('rooms', 'rooms.id = room_committees.room_id')
                     ->join('conferences', 'conferences.id = rooms.conference_id')
                     ->where('room_committees.committee_id', $committeeId)
@@ -81,6 +81,13 @@ class Committee extends BaseController
             return redirect()->to(base_url('committee/dashboard'))->with('error', 'ไม่พบรายการประเมินที่ระบุ');
         }
 
+        // Check if grading is open
+        $confModel = new \App\Models\ConferenceModel();
+        $conference = $confModel->find($review['conference_id']);
+        if (!$conference || !$conference['accept_grading']) {
+            return redirect()->to(base_url('committee/dashboard'))->with('error', 'ขออภัย ขณะนี้ระบบปิดรับคะแนน/การให้คะแนนสำหรับการประชุมรอบปีนี้แล้ว');
+        }
+
         // Fetch dynamic criteria for Round 2
         $critModel = new CriteriaModel();
         $criteria = $critModel->where(['conference_id' => $review['conference_id'], 'round' => 2])->findAll();
@@ -117,6 +124,17 @@ class Committee extends BaseController
             $review = $db->table('presentation_reviews')->where(['id' => $reviewId, 'committee_id' => session()->get('user_id')])->get()->getRowArray();
             if (!$review) {
                 return redirect()->to(base_url('committee/dashboard'))->with('error', 'ไม่มีสิทธิ์เข้าถึงการประเมินนี้');
+            }
+
+            // Get paper details to check conference active phase
+            $paperModel = new PaperModel();
+            $paper = $paperModel->find($review['paper_id']);
+            if ($paper) {
+                $confModel = new \App\Models\ConferenceModel();
+                $conference = $confModel->find($paper['conference_id']);
+                if (!$conference || !$conference['accept_grading']) {
+                    return redirect()->to(base_url('committee/dashboard'))->with('error', 'ขออภัย ขณะนี้ระบบปิดรับคะแนน/การให้คะแนนสำหรับการประชุมรอบปีนี้แล้ว');
+                }
             }
 
             $criteriaScores = $this->request->getPost('scores'); // array [criteria_id => score]

@@ -44,3 +44,10 @@ CREATE TABLE IF NOT EXISTS `evaluation_template_criteria` (
   `description` TEXT DEFAULT NULL,
   CONSTRAINT `fk_template_criteria_tmpl` FOREIGN KEY (`template_id`) REFERENCES `evaluation_templates` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Add open/close phase flags to conferences table
+ALTER TABLE `conferences` 
+ADD COLUMN `accept_submissions` TINYINT(1) NOT NULL DEFAULT 1,
+ADD COLUMN `accept_evaluations` TINYINT(1) NOT NULL DEFAULT 1,
+ADD COLUMN `accept_grading` TINYINT(1) NOT NULL DEFAULT 1;
+

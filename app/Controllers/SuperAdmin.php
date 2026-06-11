@@ -61,11 +61,14 @@ class SuperAdmin extends BaseController
             $confModel = new ConferenceModel();
             
             $data = [
-                'year'        => $this->request->getPost('year'),
-                'title'       => $this->request->getPost('title'),
-                'host_name'   => $this->request->getPost('host_name'),
-                'description' => $this->request->getPost('description'),
-                'is_active'   => $this->request->getPost('is_active') ? 1 : 0
+                'year'               => $this->request->getPost('year'),
+                'title'              => $this->request->getPost('title'),
+                'host_name'          => $this->request->getPost('host_name'),
+                'description'        => $this->request->getPost('description'),
+                'is_active'          => $this->request->getPost('is_active') ? 1 : 0,
+                'accept_submissions' => 1,
+                'accept_evaluations' => 1,
+                'accept_grading'     => 1
             ];
 
             // If new conference is set active, deactivate all others
@@ -76,6 +79,35 @@ class SuperAdmin extends BaseController
             $confModel->insert($data);
             return redirect()->to(base_url('superadmin/dashboard'))->with('success', 'สร้างปีการจัดงานประชุมเรียบร้อยแล้ว');
         }
+    }
+
+    public function editConference($id)
+    {
+        $confModel = new ConferenceModel();
+        $conference = $confModel->find($id);
+
+        if (!$conference) {
+            return redirect()->to(base_url('superadmin/dashboard'))->with('error', 'ไม่พบการประชุมที่ระบุ');
+        }
+
+        if ($this->request->is('post')) {
+            $data = [
+                'year'               => $this->request->getPost('year'),
+                'title'              => $this->request->getPost('title'),
+                'host_name'          => $this->request->getPost('host_name'),
+                'description'        => $this->request->getPost('description'),
+                'accept_submissions' => $this->request->getPost('accept_submissions') ? 1 : 0,
+                'accept_evaluations' => $this->request->getPost('accept_evaluations') ? 1 : 0,
+                'accept_grading'     => $this->request->getPost('accept_grading') ? 1 : 0
+            ];
+
+            $confModel->update($id, $data);
+            return redirect()->to(base_url('superadmin/dashboard'))->with('success', 'แก้ไขรอบปีการประชุมเรียบร้อยแล้ว');
+        }
+
+        return view('superadmin/edit_conference', [
+            'conference' => $conference
+        ]);
     }
 
     public function toggleConference($id)
@@ -124,12 +156,6 @@ class SuperAdmin extends BaseController
 
     public function deleteConference($id)
     {
-        $confModel = new ConferenceModel();
-        try {
-            $confModel->delete($id);
-            return redirect()->to(base_url('superadmin/dashboard'))->with('success', 'ลบปีการประชุมเรียบร้อยแล้ว');
-        } catch (\Exception $e) {
-            return redirect()->to(base_url('superadmin/dashboard'))->with('error', 'ไม่สามารถลบการประชุมได้ เนื่องจากยังมีบทความหรือผลประเมินผูกอยู่');
-        }
+        return redirect()->to(base_url('superadmin/dashboard'))->with('error', 'ระบบระงับการลบรอบปีการประชุมเพื่อป้องกันข้อมูลสูญหาย (ไม่อนุญาตให้ลบ)');
     }
 }

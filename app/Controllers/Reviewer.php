@@ -23,7 +23,7 @@ class Reviewer extends BaseController
         
         // Get reviewer's assigned papers
         $reviews = $db->table('paper_reviews')
-                      ->select('paper_reviews.*, papers.title, papers.abstract, papers.file_path, papers.conference_id, disciplines.name as discipline_name, tracks.name as track_name, conferences.year as conference_year')
+                      ->select('paper_reviews.*, papers.title, papers.abstract, papers.file_path, papers.conference_id, disciplines.name as discipline_name, tracks.name as track_name, conferences.year as conference_year, conferences.accept_evaluations')
                       ->join('papers', 'papers.id = paper_reviews.paper_id')
                       ->join('disciplines', 'disciplines.id = papers.discipline_id')
                       ->join('tracks', 'tracks.id = disciplines.track_id')
@@ -51,6 +51,13 @@ class Reviewer extends BaseController
 
         if (!$review) {
             return redirect()->to(base_url('reviewer/dashboard'))->with('error', 'ไม่พบรายการประเมินที่ระบุ');
+        }
+
+        // Check if evaluations are open
+        $confModel = new \App\Models\ConferenceModel();
+        $conference = $confModel->find($review['conference_id']);
+        if (!$conference || !$conference['accept_evaluations']) {
+            return redirect()->to(base_url('reviewer/dashboard'))->with('error', 'ขออภัย ขณะนี้ระบบปิดรับผลการประเมินบทความวิชาการประจำปีนี้แล้ว');
         }
 
         // Fetch dynamic criteria for Round 1
@@ -97,6 +104,17 @@ class Reviewer extends BaseController
             $review = $db->table('paper_reviews')->where(['id' => $reviewId, 'reviewer_id' => session()->get('user_id')])->get()->getRowArray();
             if (!$review) {
                 return redirect()->to(base_url('reviewer/dashboard'))->with('error', 'ไม่มีสิทธิ์เข้าถึงการประเมินนี้');
+            }
+
+            // Get paper details to check conference active phase
+            $paperModel = new PaperModel();
+            $paper = $paperModel->find($review['paper_id']);
+            if ($paper) {
+                $confModel = new \App\Models\ConferenceModel();
+                $conference = $confModel->find($paper['conference_id']);
+                if (!$conference || !$conference['accept_evaluations']) {
+                    return redirect()->to(base_url('reviewer/dashboard'))->with('error', 'ขออภัย ขณะนี้ระบบปิดรับผลการประเมินบทความวิชาการประจำปีนี้แล้ว');
+                }
             }
 
             $criteriaScores = $this->request->getPost('scores'); // array [criteria_id => score]

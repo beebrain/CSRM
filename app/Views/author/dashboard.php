@@ -196,7 +196,7 @@
         <h2>✍️ ส่งบทความวิชาการใหม่</h2>
         <p class="text-muted mb-3">อัปโหลดเอกสารบทความเพื่อเริ่มกระบวนการประเมิน</p>
 
-        <?php if ($activeConf): ?>
+        <?php if ($activeConf && $activeConf['accept_submissions']): ?>
           <form action="<?= base_url('author/submitPaper'); ?>" method="POST" enctype="multipart/form-data">
             <?= csrf_field(); ?>
             
@@ -237,7 +237,7 @@
           </form>
         <?php else: ?>
           <div class="text-center text-muted" style="padding: 2rem 0;">
-            <p>ระบบปิดรับสมัครส่งผลงานบทความวิชาการในขณะนี้</p>
+            <p><?= !$activeConf ? 'ระบบปิดรับสมัครส่งผลงานบทความวิชาการในขณะนี้' : 'ขออภัย ขณะนี้ปิดรับบทความสำหรับการประชุมรอบปีนี้แล้ว' ?></p>
           </div>
         <?php endif; ?>
       </div>

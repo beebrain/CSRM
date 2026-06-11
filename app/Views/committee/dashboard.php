@@ -103,9 +103,13 @@
                       </td>
                       <td>
                         <?php if ($paper['review_id']): ?>
-                          <a href="<?= base_url('committee/evaluate/' . $paper['review_id']) ?>" class="btn btn-primary btn-sm" style="font-size: 0.8rem; padding: 0.3rem 0.6rem;">
-                            <?= $paper['review_status'] === 'completed' ? '📝 แก้ไขผลประเมิน' : '✍️ ให้คะแนนนำเสนอ' ?>
-                          </a>
+                          <?php if ($room['accept_grading']): ?>
+                            <a href="<?= base_url('committee/evaluate/' . $paper['review_id']) ?>" class="btn btn-primary btn-sm" style="font-size: 0.8rem; padding: 0.3rem 0.6rem;">
+                              <?= $paper['review_status'] === 'completed' ? '📝 แก้ไขผลประเมิน' : '✍️ ให้คะแนนนำเสนอ' ?>
+                            </a>
+                          <?php else: ?>
+                            <span class="text-muted" style="font-size: 0.8rem;">ปิดการให้คะแนนแล้ว</span>
+                          <?php endif; ?>
                         <?php else: ?>
                           <span class="text-muted" style="font-size: 0.8rem;">ไม่พบลิงก์ประเมิน</span>
                         <?php endif; ?>

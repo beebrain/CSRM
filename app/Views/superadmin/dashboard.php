@@ -140,18 +140,37 @@
                       <small class="text-muted">เจ้าภาพ: <?= esc($conf['host_name']) ?></small>
                     </td>
                     <td>
-                      <?php if ($conf['is_active']): ?>
-                        <span class="badge badge-success">เปิดรับส่งผลงาน</span>
-                      <?php else: ?>
-                        <span class="badge badge-pending">ปิดรับ/คลังข้อมูล</span>
-                      <?php endif; ?>
+                      <div class="mb-1">
+                        <?php if ($conf['is_active']): ?>
+                          <span class="badge badge-success">ปีการประชุมหลัก</span>
+                        <?php else: ?>
+                          <span class="badge badge-pending" style="opacity: 0.75;">คลังข้อมูล</span>
+                        <?php endif; ?>
+                      </div>
+                      <div class="flex flex-col gap-1" style="margin-top: 0.4rem; gap: 0.25rem;">
+                        <div>
+                          <span class="badge <?= $conf['accept_submissions'] ? 'badge-success' : 'badge-danger' ?>" style="font-size: 0.65rem; padding: 0.1rem 0.4rem;">
+                            รับบทความ: <?= $conf['accept_submissions'] ? 'เปิด' : 'ปิด' ?>
+                          </span>
+                        </div>
+                        <div>
+                          <span class="badge <?= $conf['accept_evaluations'] ? 'badge-success' : 'badge-danger' ?>" style="font-size: 0.65rem; padding: 0.1rem 0.4rem;">
+                            ประเมิน: <?= $conf['accept_evaluations'] ? 'เปิด' : 'ปิด' ?>
+                          </span>
+                        </div>
+                        <div>
+                          <span class="badge <?= $conf['accept_grading'] ? 'badge-success' : 'badge-danger' ?>" style="font-size: 0.65rem; padding: 0.1rem 0.4rem;">
+                            ให้คะแนน: <?= $conf['accept_grading'] ? 'เปิด' : 'ปิด' ?>
+                          </span>
+                        </div>
+                      </div>
                     </td>
                     <td>
-                      <div class="flex gap-1">
+                      <div class="flex gap-1" style="flex-wrap: wrap;">
                         <?php if (!$conf['is_active']): ?>
-                          <a href="<?= base_url('superadmin/toggleConference/' . $conf['id']) ?>" class="btn btn-success btn-sm" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">เปิดใช้</a>
+                          <a href="<?= base_url('superadmin/toggleConference/' . $conf['id']) ?>" class="btn btn-success btn-sm" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">เปิดใช้หลัก</a>
                         <?php endif; ?>
-                        <a href="<?= base_url('superadmin/deleteConference/' . $conf['id']) ?>" class="btn btn-danger btn-sm" onclick="return confirm('ยืนยันที่จะลบการจัดงานประชุมปีนี้? ข้อมูลทั้งหมดที่เกี่ยวข้องจะหายไป')" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">ลบ</a>
+                        <a href="<?= base_url('superadmin/editConference/' . $conf['id']) ?>" class="btn btn-secondary btn-sm" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">⚙️ แก้ไข</a>
                       </div>
                     </td>
                   </tr>

@@ -41,6 +41,9 @@ CREATE TABLE `conferences` (
   `host_name` VARCHAR(255) NOT NULL,
   `description` TEXT DEFAULT NULL,
   `is_active` TINYINT(1) NOT NULL DEFAULT 0,
+  `accept_submissions` TINYINT(1) NOT NULL DEFAULT 1,
+  `accept_evaluations` TINYINT(1) NOT NULL DEFAULT 1,
+  `accept_grading` TINYINT(1) NOT NULL DEFAULT 1,
   `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
   `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   INDEX `idx_is_active` (`is_active`)

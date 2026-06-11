@@ -84,6 +84,10 @@ class Author extends BaseController
             return redirect()->to(base_url('author/dashboard'))->with('error', 'ขออภัย ขณะนี้ไม่มีการเปิดรับสมัครงานประชุมวิชาการประจำปี');
         }
 
+        if (!$this->activeConf['accept_submissions']) {
+            return redirect()->to(base_url('author/dashboard'))->with('error', 'ขออภัย ขณะนี้ปิดรับบทความสำหรับการประชุมรอบปีนี้แล้ว');
+        }
+
         if ($this->request->is('post')) {
             $rules = [
                 'title'         => 'required',

@@ -79,9 +79,13 @@
                     <?php endif; ?>
                   </td>
                   <td>
-                    <a href="<?= base_url('reviewer/evaluate/' . $rev['id']) ?>" class="btn btn-primary btn-sm" style="font-size: 0.8rem; padding: 0.3rem 0.6rem;">
-                      <?= $rev['status'] === 'completed' ? '📝 แก้ไขผลประเมิน' : '✍️ เริ่มทำประเมิน' ?>
-                    </a>
+                    <?php if ($rev['accept_evaluations']): ?>
+                      <a href="<?= base_url('reviewer/evaluate/' . $rev['id']) ?>" class="btn btn-primary btn-sm" style="font-size: 0.8rem; padding: 0.3rem 0.6rem;">
+                        <?= $rev['status'] === 'completed' ? '📝 แก้ไขผลประเมิน' : '✍️ เริ่มทำประเมิน' ?>
+                      </a>
+                    <?php else: ?>
+                      <span class="text-muted" style="font-size: 0.8rem;">ปิดรับผลประเมิน</span>
+                    <?php endif; ?>
                   </td>
                 </tr>
               <?php endforeach; ?>
