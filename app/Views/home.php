@@ -2,315 +2,10 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>งานประชุมวิชาการระดับชาติ - มหาวิทยาลัยราชภัฏพิบูลสงคราม</title>
   <link rel="stylesheet" href="<?= base_url('css/style.css'); ?>">
-  <style>
-    /* Custom Green-Gold Theme override for PSRU branding */
-    :root {
-      --psru-green: #065f46; /* Emerald/Deep Green */
-      --psru-green-light: #10b981;
-      --psru-gold: #d97706; /* Amber/Gold */
-      --psru-gold-light: #fbbf24;
-      --primary: var(--psru-green);
-      --primary-hover: #047857;
-      --primary-gradient: linear-gradient(135deg, var(--psru-green) 0%, #047857 100%);
-      --text-glow: 0 0 20px rgba(16, 185, 129, 0.15);
-    }
 
-    body {
-      background-image: 
-        radial-gradient(at 0% 0%, rgba(6, 95, 70, 0.05) 0px, transparent 50%),
-        radial-gradient(at 100% 100%, rgba(217, 119, 6, 0.05) 0px, transparent 50%);
-    }
-
-    /* Hero Section styling with Image Background & Overlay */
-    .hero-section {
-      position: relative;
-      text-align: center;
-      padding: 6.5rem 2rem;
-      margin-bottom: 3rem;
-      border-radius: var(--radius-lg);
-      overflow: hidden;
-      background-image: 
-        linear-gradient(135deg, rgba(6, 95, 70, 0.88) 0%, rgba(15, 23, 42, 0.95) 100%),
-        url('<?= base_url("images/conference_hero_banner.png"); ?>');
-      background-size: cover;
-      background-position: center;
-      border: 1px solid rgba(6, 95, 70, 0.25);
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-      color: #ffffff;
-    }
-    
-    .hero-tag {
-      display: inline-block;
-      padding: 0.35rem 1.2rem;
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      color: #fcd34d; /* Bright gold/amber for high contrast */
-      font-weight: 600;
-      font-size: 0.85rem;
-      border-radius: 9999px;
-      margin-bottom: 1.5rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
-    }
-
-    .hero-title {
-      font-size: 3rem;
-      font-weight: 800;
-      line-height: 1.2;
-      color: #ffffff;
-      margin-bottom: 1.25rem;
-      letter-spacing: -0.02em;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-    }
-
-    .hero-title span {
-      color: #fbbf24; /* Bright amber gold for dark background */
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-    }
-
-    .hero-subtitle {
-      font-size: 1.25rem;
-      color: #f1f5f9; /* Slate-100 for high readability on dark overlay */
-      max-width: 750px;
-      margin: 0 auto 2.5rem auto;
-      line-height: 1.8;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-    }
-
-    /* Hero Buttons */
-    .btn-hero-primary {
-      background: var(--primary-gradient);
-      color: #ffffff;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      box-shadow: 0 4px 12px rgba(6, 95, 70, 0.3);
-    }
-    .btn-hero-primary:hover {
-      background: #047857;
-      transform: translateY(-1px);
-      box-shadow: 0 6px 16px rgba(6, 95, 70, 0.45);
-    }
-
-    .btn-hero-gold {
-      background: #fbbf24;
-      color: #0f172a;
-      border: 1px solid #d97706;
-      font-weight: 700;
-      box-shadow: 0 4px 12px rgba(251, 191, 36, 0.2);
-    }
-    .btn-hero-gold:hover {
-      background: #f59e0b;
-      transform: translateY(-1px);
-      box-shadow: 0 6px 16px rgba(245, 158, 11, 0.4);
-    }
-
-    /* Button adjustments with WCAG AA compliance (dark slate text on gold) */
-    .btn-gold {
-      background: #fbbf24;
-      color: #0f172a;
-      border: 1px solid #d97706;
-      font-weight: 700;
-      box-shadow: 0 4px 12px rgba(217, 119, 6, 0.15);
-    }
-    .btn-gold:hover {
-      background: #f59e0b;
-      transform: translateY(-1px);
-      box-shadow: 0 6px 16px rgba(217, 119, 6, 0.25);
-    }
-
-    /* Info grids & layouts */
-    .section-title {
-      text-align: center;
-      margin-bottom: 0.5rem;
-      font-weight: 800;
-      font-size: 2rem;
-      color: var(--text-primary);
-    }
-    
-    .section-subtitle {
-      text-align: center;
-      color: var(--text-secondary);
-      max-width: 600px;
-      margin: 0 auto 3rem auto;
-      font-size: 1rem;
-    }
-
-    /* About section split layout styling */
-    @media (max-width: 768px) {
-      .about-split {
-        grid-template-columns: 1fr !important;
-        gap: 1.5rem !important;
-      }
-    }
-
-    /* Tracks Custom Grouping layout (removing identical card grids) */
-    .tracks-container {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 2.5rem;
-      margin-top: 3rem;
-    }
-    @media (max-width: 1024px) {
-      .tracks-container {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-    @media (max-width: 768px) {
-      .tracks-container {
-        grid-template-columns: 1fr;
-      }
-    }
-    
-    .track-category-card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-top: 4px solid var(--psru-green); /* Full top border accent instead of side-stripe */
-      border-radius: var(--radius-md);
-      padding: 2.25rem 2rem;
-      box-shadow: var(--shadow);
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-      transition: var(--transition);
-    }
-    
-    .track-category-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 20px 25px -5px rgba(6, 95, 70, 0.05);
-      border-color: rgba(6, 95, 70, 0.25);
-      border-top-color: var(--psru-green);
-    }
-    
-    .category-title {
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: var(--psru-green);
-      border-bottom: 2px solid rgba(6, 95, 70, 0.1);
-      padding-bottom: 0.5rem;
-      margin-bottom: 0.5rem;
-    }
-    
-    .track-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 1.25rem;
-    }
-    
-    .track-item {
-      display: flex;
-      flex-direction: column;
-      gap: 0.25rem;
-    }
-    
-    .track-name {
-      font-weight: 600;
-      color: var(--text-primary);
-      font-size: 0.95rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    
-    .track-name::before {
-      content: "•";
-      color: var(--psru-gold);
-      font-size: 1.2rem;
-      line-height: 1;
-    }
-    
-    .track-desc {
-      color: var(--text-secondary);
-      font-size: 0.85rem;
-      padding-left: 1rem;
-      line-height: 1.5;
-    }
-
-    /* Timeline container */
-    .timeline-container {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius-md);
-      padding: 3rem 2rem;
-      box-shadow: var(--shadow);
-      margin-bottom: 4rem;
-    }
-
-    .timeline-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 2rem;
-      margin-top: 2rem;
-      position: relative;
-    }
-
-    .timeline-item {
-      position: relative;
-      padding-left: 1.25rem;
-      border-left: 2px solid var(--card-border);
-    }
-
-    .timeline-item.active {
-      border-left-color: var(--psru-green);
-    }
-
-    .timeline-dot {
-      position: absolute;
-      left: -6px;
-      top: 6px;
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: #cbd5e1;
-    }
-
-    .timeline-item.active .timeline-dot {
-      background: var(--psru-green);
-      box-shadow: 0 0 8px var(--psru-green-light);
-    }
-
-    .timeline-date {
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: var(--psru-green);
-      margin-bottom: 0.25rem;
-    }
-
-    /* Footer styling */
-    footer {
-      border-top: 1px solid var(--card-border);
-      padding: 4rem 1.5rem;
-      text-align: center;
-      margin-top: 5rem;
-      background: rgba(255, 255, 255, 0.5);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-    }
-
-    /* Table styling for publication fee */
-    .fee-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 1.5rem 0;
-      font-size: 0.95rem;
-    }
-    .fee-table th, .fee-table td {
-      border: 1px solid var(--card-border);
-      padding: 0.75rem 1rem;
-      text-align: left;
-    }
-    .fee-table th {
-      background: rgba(6, 95, 70, 0.04);
-      color: var(--psru-green);
-      font-weight: 600;
-    }
-  </style>
 </head>
 <body>
 
@@ -319,9 +14,13 @@
     <div class="navbar-brand" style="color: var(--psru-green); font-weight: 800;">
       🎓 PSRU CSRM
     </div>
+    <input type="checkbox" id="nav-toggle" class="nav-toggle">
+    <label for="nav-toggle" class="nav-toggle-label">
+      <span></span>
+    </label>
     <div class="navbar-menu">
       <a href="#about" class="navbar-item">หลักการและเหตุผล</a>
-      <a href="#tracks" class="navbar-item">ศาสตร์การประชุม</a>
+      <a href="#tracks" class="navbar-item">หัวข้อการประชุม</a>
       <a href="#guidelines" class="navbar-item">การส่งบทความ</a>
       <a href="#fees" class="navbar-item">ค่าธรรมเนียมและการตีพิมพ์</a>
       <a href="#timeline" class="navbar-item">กำหนดการ</a>
@@ -330,7 +29,7 @@
   </nav>
 
   <!-- Main Grid Container -->
-  <div class="container">
+  <main class="container">
 
     <!-- Hero Section -->
     <header class="hero-section animate-fade-in" style="animation-delay: 0.1s;">
@@ -363,7 +62,7 @@
           </h2>
           <div style="width: 60px; height: 4px; background: var(--psru-gold); border-radius: 2px; margin-bottom: 1.5rem;"></div>
           <p style="font-size: 1.1rem; font-weight: 500; color: var(--text-primary); line-height: 1.6;">
-            การประชุมวิชาการระดับชาติ ประจำปี พ.ศ. 2569 ณ มหาวิทยาลัยราชภัฏพิบูลสงคราม ร่วมขับเคลื่อนการวิจัยคณิตศาสตร์และศึกษาศาสตร์สู่ระดับสากล
+            การประชุมวิชาการระดับชาติ ประจำปี พ.ศ. 2569 ณ มหาวิทยาลัยราชภัฏพิบูลสงคราม ร่วมขับเคลื่อนการวิจัยคณิตศาสตร์และคณิตศาสตรศึกษาสู่ระดับสากล
           </p>
         </div>
         <div class="about-right" style="background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 2.5rem; box-shadow: var(--shadow);">
@@ -476,19 +175,19 @@
             </h3>
             <ul style="list-style-type: none; padding: 0; display: flex; flex-direction: column; gap: 1rem; color: var(--text-secondary); font-size: 0.95rem; line-height: 1.7;">
               <li style="position: relative; padding-left: 1.5rem;">
-                <span style="position: absolute; left: 0; color: var(--psru-gold); font-weight: bold;">1.</span>
+                <span style="position: absolute; left: 0; color: var(--psru-gold-dark); font-weight: bold;">1.</span>
                 บทความที่ส่งต้องเป็นผลงานวิจัยใหม่ที่ไม่เคยตีพิมพ์หรือเผยแพร่ที่ใดมาก่อน
               </li>
               <li style="position: relative; padding-left: 1.5rem;">
-                <span style="position: absolute; left: 0; color: var(--psru-gold); font-weight: bold;">2.</span>
+                <span style="position: absolute; left: 0; color: var(--psru-gold-dark); font-weight: bold;">2.</span>
                 รองรับบทความวิจัยฉบับภาษาไทยและภาษาอังกฤษ
               </li>
               <li style="position: relative; padding-left: 1.5rem;">
-                <span style="position: absolute; left: 0; color: var(--psru-gold); font-weight: bold;">3.</span>
+                <span style="position: absolute; left: 0; color: var(--psru-gold-dark); font-weight: bold;">3.</span>
                 ความยาวของบทความวิจัยต้องอยู่ระหว่าง 6 - 8 หน้า ตามเทมเพลตที่กำหนด
               </li>
               <li style="position: relative; padding-left: 1.5rem;">
-                <span style="position: absolute; left: 0; color: var(--psru-gold); font-weight: bold;">4.</span>
+                <span style="position: absolute; left: 0; color: var(--psru-gold-dark); font-weight: bold;">4.</span>
                 ประเมินโดยผู้ทรงคุณวุฒิอย่างน้อย 2 ท่าน รูปแบบ Double-blind peer review
               </li>
             </ul>
@@ -540,7 +239,7 @@
               <tr>
                 <th style="font-weight: 700;">ประเภทผู้เข้าร่วมงาน</th>
                 <th style="font-weight: 700; text-align: center;">อัตราลงทะเบียนปกติ</th>
-                <th style="font-weight: 700; text-align: center; color: var(--psru-gold);">ลงทะเบียนล่วงหน้า (Early Bird)</th>
+                <th style="font-weight: 700; text-align: center; color: var(--psru-gold-dark);">ลงทะเบียนล่วงหน้า (Early Bird)</th>
               </tr>
             </thead>
             <tbody>
@@ -594,7 +293,7 @@
             <div class="timeline-date">เฟสที่ 1: การเปิดรับบทความวิจัย</div>
             <strong style="display: block; margin-bottom: 0.5rem; font-size: 1.05rem;">Submission Phase</strong>
             <p class="text-muted" style="font-size: 0.85rem; line-height: 1.5;">
-              <?= ($activeConf && $activeConf['accept_submissions']) ? '<span style="color: var(--psru-green-light); font-weight: 600;">🟢 กำลังเปิดรับผลงานใหม่</span>' : '<span style="color: var(--danger); font-weight: 600;">🔴 ปิดรับผลงานชั่วคราว</span>' ?>
+              <?= ($activeConf && $activeConf['accept_submissions']) ? '<span class="badge badge-success">กำลังเปิดรับผลงานใหม่</span>' : '<span class="badge badge-danger">ปิดรับผลงานชั่วคราว</span>' ?>
             </p>
           </div>
           
@@ -603,28 +302,28 @@
             <div class="timeline-date">เฟสที่ 2: การประเมินผลโดยผู้ทรงคุณวุฒิ</div>
             <strong style="display: block; margin-bottom: 0.5rem; font-size: 1.05rem;">Peer Review Phase</strong>
             <p class="text-muted" style="font-size: 0.85rem; line-height: 1.5;">
-              <?= ($activeConf && $activeConf['accept_evaluations']) ? '<span style="color: var(--psru-green-light); font-weight: 600;">🟢 อยู่ระหว่างดำเนินการประเมิน</span>' : '<span style="color: var(--text-secondary);">⚪ รอเข้าสู่ช่วงการประเมิน</span>' ?>
+              <?= ($activeConf && $activeConf['accept_evaluations']) ? '<span class="badge badge-success">อยู่ระหว่างดำเนินการประเมิน</span>' : '<span class="badge badge-pending">รอเข้าสู่ช่วงการประเมิน</span>' ?>
             </p>
           </div>
           
           <div class="timeline-item">
             <div class="timeline-dot"></div>
             <div class="timeline-date">เฟสที่ 3: วันจัดงานประชุมวิชาการและการนำเสนอผลงาน</div>
-            <strong style="display: block; margin-bottom: 0.5rem; font-size: 1.05rem;">Conference & Grading</strong>
+            <strong style="display: block; margin-bottom: 0.5rem; font-size: 1.05rem;">Conference & Proceedings</strong>
             <p class="text-muted" style="font-size: 0.85rem; line-height: 1.5;">
-              <?= ($activeConf && $activeConf['accept_grading']) ? '<span style="color: var(--psru-green-light); font-weight: 600;">🟢 กำลังบันทึกผลการนำเสนอ</span>' : '<span style="color: var(--text-secondary);">⚪ วันจัดงานประชุมวิชาการระดับชาติ</span>' ?>
+              <?= ($activeConf && $activeConf['accept_grading']) ? '<span class="badge badge-success">กำลังบันทึกผลการนำเสนอ</span>' : '<span class="badge badge-info">วันจัดงานประชุมวิชาการระดับชาติ</span>' ?>
             </p>
           </div>
         </div>
       </div>
     </section>
 
-  </div>
+  </main>
 
   <!-- Contact & Footer Section -->
   <footer id="contact">
     <div style="max-width: 800px; margin: 0 auto;">
-      <h3 style="color: var(--psru-green); font-weight: 700; margin-bottom: 0.75rem;">สาขาวิชาคณิตศาสตร์ คณะวิทยาศาสตร์และเทคโนโลยี มหาวิทยาลัยราชภัฏพิบูลสงคราม</h3>
+      <p style="color: var(--psru-green); font-weight: 700; font-size: 1.15rem; margin-bottom: 0.75rem;">สาขาวิชาคณิตศาสตร์ คณะวิทยาศาสตร์และเทคโนโลยี มหาวิทยาลัยราชภัฏพิบูลสงคราม</p>
       <p class="text-muted" style="font-size: 0.85rem; line-height: 1.6; margin-bottom: 1.5rem;">
         เลขที่ 156 หมู่ 5 ถนนเลี่ยงเมืองพิษณุโลก (ส่วนทะเลแก้ว) ตำบลพลายชุมพล อำเภอเมือง จังหวัดพิษณุโลก 65000<br>
         โทรศัพท์: 0-5526-7000 ต่อ คณะวิทยาศาสตร์และเทคโนโลยี | อีเมล: science@psru.ac.th
