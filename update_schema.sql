@@ -47,7 +47,11 @@ CREATE TABLE IF NOT EXISTS `evaluation_template_criteria` (
 
 -- Add open/close phase flags to conferences table
 ALTER TABLE `conferences` 
-ADD COLUMN `accept_submissions` TINYINT(1) NOT NULL DEFAULT 1,
-ADD COLUMN `accept_evaluations` TINYINT(1) NOT NULL DEFAULT 1,
-ADD COLUMN `accept_grading` TINYINT(1) NOT NULL DEFAULT 1;
+ADD COLUMN accept_submissions TINYINT(1) NOT NULL DEFAULT 1,
+ADD COLUMN accept_evaluations TINYINT(1) NOT NULL DEFAULT 1,
+ADD COLUMN accept_grading TINYINT(1) NOT NULL DEFAULT 1;
+
+-- Add affiliation to users table
+ALTER TABLE `users` ADD COLUMN `affiliation` VARCHAR(255) DEFAULT NULL AFTER `last_name`;
+
 

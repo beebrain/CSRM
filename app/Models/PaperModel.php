@@ -17,7 +17,7 @@ class PaperModel extends Model
 
     public function getDetails($conditions = [])
     {
-        $builder = $this->select('papers.*, users.email as author_email, users.first_name as author_first_name, users.last_name as author_last_name, disciplines.name as discipline_name, tracks.name as track_name, conferences.year as conference_year')
+        $builder = $this->select('papers.*, users.email as author_email, users.first_name as author_first_name, users.last_name as author_last_name, users.affiliation as author_affiliation, disciplines.name as discipline_name, tracks.name as track_name, conferences.year as conference_year')
                         ->join('users', 'users.id = papers.author_id')
                         ->join('disciplines', 'disciplines.id = papers.discipline_id')
                         ->join('tracks', 'tracks.id = disciplines.track_id')

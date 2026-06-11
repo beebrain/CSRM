@@ -55,6 +55,7 @@ class Auth extends BaseController
                 'password'   => 'required|min_length[6]',
                 'first_name' => 'required',
                 'last_name'  => 'required',
+                'affiliation'=> 'required',
                 'role'       => 'required|in_list[author,reviewer,committee,admin]'
             ];
 
@@ -70,6 +71,7 @@ class Auth extends BaseController
                 'password'           => password_hash($this->request->getPost('password'), PASSWORD_BCRYPT),
                 'first_name'         => $this->request->getPost('first_name'),
                 'last_name'          => $this->request->getPost('last_name'),
+                'affiliation'        => $this->request->getPost('affiliation'),
                 'role'               => $this->request->getPost('role'),
                 'is_verified'        => 0, // Must verify
                 'verification_token' => $token

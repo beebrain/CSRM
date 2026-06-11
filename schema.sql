@@ -25,6 +25,7 @@ CREATE TABLE `users` (
   `password` VARCHAR(255) NOT NULL,
   `first_name` VARCHAR(100) NOT NULL,
   `last_name` VARCHAR(100) NOT NULL,
+  `affiliation` VARCHAR(255) DEFAULT NULL,
   `role` ENUM('superadmin', 'admin', 'reviewer', 'committee', 'author') NOT NULL DEFAULT 'author',
   `is_verified` TINYINT(1) NOT NULL DEFAULT 0,
   `verification_token` VARCHAR(100) DEFAULT NULL,

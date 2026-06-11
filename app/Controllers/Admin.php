@@ -117,7 +117,7 @@ class Admin extends BaseController
         $paperRevisions = [];
         foreach ($papers as $p) {
             $paperAssignments[$p['id']] = $db->table('paper_reviews')
-                                             ->select('paper_reviews.*, users.first_name, users.last_name, users.email')
+                                             ->select('paper_reviews.*, users.first_name, users.last_name, users.email, users.affiliation')
                                              ->join('users', 'users.id = paper_reviews.reviewer_id')
                                              ->where('paper_id', $p['id'])
                                              ->get()
@@ -381,6 +381,32 @@ class Admin extends BaseController
             }
 
             $db = \Config\Database::connect();
+
+            // Server-side Conflict of Interest (COI) check
+            $paper = $db->table('papers')
+                        ->select('papers.*, users.affiliation as author_affiliation')
+                        ->join('users', 'users.id = papers.author_id')
+                        ->where('papers.id', $paperId)
+                        ->get()
+                        ->getRowArray();
+
+            if (!$paper) {
+                return redirect()->to(base_url('admin/dashboard'))->with('error', 'ไม่พบข้อมูลบทความ');
+            }
+
+            $authorAff = !empty($paper['author_affiliation']) ? preg_replace('/\s+/', '', mb_strtolower($paper['author_affiliation'])) : '';
+            if (!empty($authorAff)) {
+                foreach ($reviewerIds as $rId) {
+                    $reviewer = $db->table('users')->where('id', $rId)->get()->getRowArray();
+                    if ($reviewer) {
+                        $revAff = !empty($reviewer['affiliation']) ? preg_replace('/\s+/', '', mb_strtolower($reviewer['affiliation'])) : '';
+                        if ($revAff === $authorAff) {
+                            return redirect()->to(base_url('admin/dashboard'))->with('error', 'ไม่สามารถเลือกผู้ทรงคุณวุฒิจากสถาบันเดียวกันกับผู้แต่งบทความได้: ' . esc($reviewer['first_name']) . ' ' . esc($reviewer['last_name']));
+                        }
+                    }
+                }
+            }
+
             $db->transStart();
 
             // Clear previous assignments

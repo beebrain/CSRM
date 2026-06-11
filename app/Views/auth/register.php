@@ -76,6 +76,11 @@
         </div>
 
         <div class="form-group">
+          <label class="form-label" for="affiliation">หน่วยงาน / สถาบัน / มหาวิทยาลัย</label>
+          <input type="text" id="affiliation" name="affiliation" class="form-control" placeholder="เช่น มหาวิทยาลัยราชภัฏพิบูลสงคราม" required value="<?= old('affiliation'); ?>">
+        </div>
+
+        <div class="form-group">
           <label class="form-label" for="user_type">ประเภทบัญชีผู้ใช้</label>
           <select id="user_type" class="form-control" required onchange="handleUserTypeChange(this.value)">
             <option value="author" <?= old('role') === 'author' || !old('role') ? 'selected' : ''; ?>>ผู้ส่ง (Author)</option>
