@@ -547,21 +547,11 @@
 
       <!-- Publication Network details -->
       <div style="background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 2.5rem; box-shadow: var(--shadow);">
-        <h3 style="color: var(--psru-green); font-size: 1.2rem; font-weight: 700; margin-bottom: 1.25rem;">
+        <h3 style="color: var(--psru-green); font-size: 1.2rem; font-weight: 700; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
           📘 โอกาสการได้รับการตีพิมพ์ในวารสารเครือข่าย (Publications)
         </h3>
-        <p style="color: var(--text-primary); font-size: 0.95rem; line-height: 1.8; margin-bottom: 1.25rem;">
-          บทความวิจัยที่มีคุณภาพดีเด่นที่ผ่านการประเมินจากคณะกรรมการผู้ทรงคุณวุฒิ จะได้รับการพิจารณาคัดเลือกเพื่อเสนอส่งตีพิมพ์ในวารสารระดับชาติในเครือข่ายของมหาวิทยาลัยราชภัฏพิบูลสงคราม โดยไม่มีค่าใช้จ่ายเพิ่มเติม ได้แก่:
-        </p>
-        <div class="grid-2" style="gap: 1.5rem;">
-          <div style="background: rgba(37, 99, 235, 0.02); border: 1px solid rgba(37, 99, 235, 0.1); border-radius: var(--radius-sm); padding: 1.25rem;">
-            <strong style="color: var(--psru-green); font-size: 1rem; display: block; margin-bottom: 0.5rem;">📘 วารสารวิชาการ มหาวิทยาลัยราชภัฏพิบูลสงคราม</strong>
-            <span style="font-size: 0.85rem; color: var(--text-secondary);">เน้นบทความวิจัยสาขาวิทยาศาสตร์ เทคโนโลยี และวิทยาศาสตร์ประยุกต์ (อยู่ในฐานข้อมูล TCI กลุ่ม 1)</span>
-          </div>
-          <div style="background: rgba(217, 119, 6, 0.02); border: 1px solid rgba(217, 119, 6, 0.1); border-radius: var(--radius-sm); padding: 1.25rem;">
-            <strong style="color: var(--psru-green); font-size: 1rem; display: block; margin-bottom: 0.5rem;">📙 วารสารวิจัยและพัฒนา มรภ.พิบูลสงคราม</strong>
-            <span style="font-size: 0.85rem; color: var(--text-secondary);">บทความวิจัยและวิชาการทั่วไปด้านการพัฒนาท้องถิ่นและวิทยาศาสตร์สิ่งแวดล้อม (อยู่ในฐานข้อมูล TCI กลุ่ม 2)</span>
-          </div>
+        <div style="background: rgba(6, 95, 70, 0.02); border: 1px dashed var(--psru-green); border-radius: var(--radius-sm); padding: 2rem; text-align: center; color: var(--text-secondary); font-weight: 600; font-size: 1.05rem;">
+          ⏳ อยู่ในกระบวนการติดต่อประสานงานวารสารเครือข่ายวิชาการ
         </div>
       </div>
     </section>
