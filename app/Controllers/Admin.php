@@ -75,7 +75,7 @@ class Admin extends BaseController
             session()->set('admin_conference_id', $id);
         }
 
-        return redirect()->to('/admin/dashboard');
+        return redirect()->to(base_url('admin/dashboard'));
     }
 
     public function dashboard()
@@ -173,7 +173,7 @@ class Admin extends BaseController
                 'track_id' => $this->request->getPost('track_id'),
                 'name'     => $this->request->getPost('name')
             ]);
-            return redirect()->to('/admin/disciplines')->with('success', 'เพิ่มศาสตร์ย่อยเรียบร้อยแล้ว');
+            return redirect()->to(base_url('admin/disciplines'))->with('success', 'เพิ่มศาสตร์ย่อยเรียบร้อยแล้ว');
         }
     }
 
@@ -182,9 +182,9 @@ class Admin extends BaseController
         $db = \Config\Database::connect();
         try {
             $db->table('disciplines')->delete(['id' => $id]);
-            return redirect()->to('/admin/disciplines')->with('success', 'ลบศาสตร์ย่อยเรียบร้อยแล้ว');
+            return redirect()->to(base_url('admin/disciplines'))->with('success', 'ลบศาสตร์ย่อยเรียบร้อยแล้ว');
         } catch (\Exception $e) {
-            return redirect()->to('/admin/disciplines')->with('error', 'ไม่สามารถลบศาสตร์ย่อยได้เนื่องจากมีบทความวิชาการผูกอยู่');
+            return redirect()->to(base_url('admin/disciplines'))->with('error', 'ไม่สามารถลบศาสตร์ย่อยได้เนื่องจากมีบทความวิชาการผูกอยู่');
         }
     }
 
@@ -232,7 +232,7 @@ class Admin extends BaseController
                 'max_score'     => $this->request->getPost('max_score'),
                 'description'   => $this->request->getPost('description')
             ]);
-            return redirect()->to('/admin/criteria')->with('success', 'เพิ่มเกณฑ์ประเมินเรียบร้อยแล้ว');
+            return redirect()->to(base_url('admin/criteria'))->with('success', 'เพิ่มเกณฑ์ประเมินเรียบร้อยแล้ว');
         }
     }
 
@@ -241,9 +241,9 @@ class Admin extends BaseController
         $critModel = new CriteriaModel();
         try {
             $critModel->delete($id);
-            return redirect()->to('/admin/criteria')->with('success', 'ลบเกณฑ์ประเมินเรียบร้อยแล้ว');
+            return redirect()->to(base_url('admin/criteria'))->with('success', 'ลบเกณฑ์ประเมินเรียบร้อยแล้ว');
         } catch (\Exception $e) {
-            return redirect()->to('/admin/criteria')->with('error', 'ไม่สามารถลบเกณฑ์ประเมินได้เนื่องจากเริ่มมีการประเมินผลงานและลงคะแนนไปแล้ว');
+            return redirect()->to(base_url('admin/criteria'))->with('error', 'ไม่สามารถลบเกณฑ์ประเมินได้เนื่องจากเริ่มมีการประเมินผลงานและลงคะแนนไปแล้ว');
         }
     }
 
@@ -254,7 +254,7 @@ class Admin extends BaseController
             $templateName = $this->request->getPost('template_name');
 
             if (empty(trim($templateName))) {
-                return redirect()->to('/admin/criteria')->with('error', 'กรุณาระบุชื่อแบบฟอร์มคะแนน');
+                return redirect()->to(base_url('admin/criteria'))->with('error', 'กรุณาระบุชื่อแบบฟอร์มคะแนน');
             }
 
             $critModel = new CriteriaModel();
@@ -264,7 +264,7 @@ class Admin extends BaseController
             ])->findAll();
 
             if (empty($currentCriteria)) {
-                return redirect()->to('/admin/criteria')->with('error', 'ไม่สามารถบันทึกได้ เนื่องจากไม่มีเกณฑ์ประเมินสำหรับขั้นตอนนี้');
+                return redirect()->to(base_url('admin/criteria'))->with('error', 'ไม่สามารถบันทึกได้ เนื่องจากไม่มีเกณฑ์ประเมินสำหรับขั้นตอนนี้');
             }
 
             $db = \Config\Database::connect();
@@ -290,10 +290,10 @@ class Admin extends BaseController
             $db->transComplete();
 
             if ($db->transStatus() === false) {
-                return redirect()->to('/admin/criteria')->with('error', 'เกิดข้อผิดพลาดในการบันทึกแบบฟอร์มสำเร็จรูป');
+                return redirect()->to(base_url('admin/criteria'))->with('error', 'เกิดข้อผิดพลาดในการบันทึกแบบฟอร์มสำเร็จรูป');
             }
 
-            return redirect()->to('/admin/criteria')->with('success', 'บันทึกแบบฟอร์มคะแนนสำเร็จรูปเรียบร้อยแล้ว');
+            return redirect()->to(base_url('admin/criteria'))->with('success', 'บันทึกแบบฟอร์มคะแนนสำเร็จรูปเรียบร้อยแล้ว');
         }
     }
 
@@ -305,12 +305,12 @@ class Admin extends BaseController
 
             $template = $db->table('evaluation_templates')->where('id', $templateId)->get()->getRowArray();
             if (!$template) {
-                return redirect()->to('/admin/criteria')->with('error', 'ไม่พบแบบฟอร์มคะแนนที่ระบุ');
+                return redirect()->to(base_url('admin/criteria'))->with('error', 'ไม่พบแบบฟอร์มคะแนนที่ระบุ');
             }
 
             $templateCriteria = $db->table('evaluation_template_criteria')->where('template_id', $templateId)->get()->getResultArray();
             if (empty($templateCriteria)) {
-                return redirect()->to('/admin/criteria')->with('error', 'แบบฟอร์มนี้ไม่มีรายการเกณฑ์ประเมินย่อย');
+                return redirect()->to(base_url('admin/criteria'))->with('error', 'แบบฟอร์มนี้ไม่มีรายการเกณฑ์ประเมินย่อย');
             }
 
             $db->transStart();
@@ -336,14 +336,14 @@ class Admin extends BaseController
                 $db->transComplete();
 
                 if ($db->transStatus() === false) {
-                    return redirect()->to('/admin/criteria')->with('error', 'เกิดข้อผิดพลาดในการนำเข้าเกณฑ์ประเมิน');
+                    return redirect()->to(base_url('admin/criteria'))->with('error', 'เกิดข้อผิดพลาดในการนำเข้าเกณฑ์ประเมิน');
                 }
 
-                return redirect()->to('/admin/criteria')->with('success', 'นำเข้าเกณฑ์ประเมินเรียบร้อยแล้ว');
+                return redirect()->to(base_url('admin/criteria'))->with('success', 'นำเข้าเกณฑ์ประเมินเรียบร้อยแล้ว');
 
             } catch (\Exception $e) {
                 $db->transRollback();
-                return redirect()->to('/admin/criteria')->with('error', 'ไม่สามารถนำเข้าเกณฑ์ได้ เนื่องจากมีบทความที่เริ่มได้รับการลงคะแนนในรอบนี้ไปแล้ว');
+                return redirect()->to(base_url('admin/criteria'))->with('error', 'ไม่สามารถนำเข้าเกณฑ์ได้ เนื่องจากมีบทความที่เริ่มได้รับการลงคะแนนในรอบนี้ไปแล้ว');
             }
         }
     }
@@ -352,7 +352,7 @@ class Admin extends BaseController
     {
         $db = \Config\Database::connect();
         $db->table('evaluation_templates')->delete(['id' => $id]);
-        return redirect()->to('/admin/criteria')->with('success', 'ลบแบบฟอร์มสำเร็จรูปเรียบร้อยแล้ว');
+        return redirect()->to(base_url('admin/criteria'))->with('success', 'ลบแบบฟอร์มสำเร็จรูปเรียบร้อยแล้ว');
     }
 
     // ==========================================
@@ -365,7 +365,7 @@ class Admin extends BaseController
             $reviewerIds = $this->request->getPost('reviewer_ids'); // Array of 3 reviewers
 
             if (empty($reviewerIds) || count($reviewerIds) < 3) {
-                return redirect()->to('/admin/dashboard')->with('error', 'ต้องเลือกผู้ทรงคุณวุฒิอย่างน้อย 3 คน');
+                return redirect()->to(base_url('admin/dashboard'))->with('error', 'ต้องเลือกผู้ทรงคุณวุฒิอย่างน้อย 3 คน');
             }
 
             $db = \Config\Database::connect();
@@ -389,10 +389,10 @@ class Admin extends BaseController
             $db->transComplete();
 
             if ($db->transStatus() === false) {
-                return redirect()->to('/admin/dashboard')->with('error', 'เกิดข้อผิดพลาดในการมอบหมายผู้ทรงคุณวุฒิ');
+                return redirect()->to(base_url('admin/dashboard'))->with('error', 'เกิดข้อผิดพลาดในการมอบหมายผู้ทรงคุณวุฒิ');
             }
 
-            return redirect()->to('/admin/dashboard')->with('success', 'มอบหมายผู้ทรงคุณวุฒิประเมินเรียบร้อยแล้ว');
+            return redirect()->to(base_url('admin/dashboard'))->with('success', 'มอบหมายผู้ทรงคุณวุฒิประเมินเรียบร้อยแล้ว');
         }
     }
 
@@ -456,7 +456,7 @@ class Admin extends BaseController
                 'location'      => $this->request->getPost('location'),
                 'date_time'     => $this->request->getPost('date_time')
             ]);
-            return redirect()->to('/admin/rooms')->with('success', 'สร้างห้องนำเสนอเรียบร้อยแล้ว');
+            return redirect()->to(base_url('admin/rooms'))->with('success', 'สร้างห้องนำเสนอเรียบร้อยแล้ว');
         }
     }
 
@@ -464,7 +464,7 @@ class Admin extends BaseController
     {
         $roomModel = new RoomModel();
         $roomModel->delete($id);
-        return redirect()->to('/admin/rooms')->with('success', 'ลบห้องนำเสนอเรียบร้อยแล้ว');
+        return redirect()->to(base_url('admin/rooms'))->with('success', 'ลบห้องนำเสนอเรียบร้อยแล้ว');
     }
 
     public function assignCommittee()
@@ -477,7 +477,7 @@ class Admin extends BaseController
             // Check if already assigned
             $existing = $db->table('room_committees')->where(['room_id' => $roomId, 'committee_id' => $commId])->get()->getRow();
             if ($existing) {
-                return redirect()->to('/admin/rooms')->with('error', 'กรรมการท่านนี้ถูกมอบหมายในห้องนี้อยู่แล้ว');
+                return redirect()->to(base_url('admin/rooms'))->with('error', 'กรรมการท่านนี้ถูกมอบหมายในห้องนี้อยู่แล้ว');
             }
 
             $db->table('room_committees')->insert([
@@ -501,7 +501,7 @@ class Admin extends BaseController
                 }
             }
 
-            return redirect()->to('/admin/rooms')->with('success', 'มอบหมายกรรมการเข้าห้องพรีเซนต์เรียบร้อยแล้ว');
+            return redirect()->to(base_url('admin/rooms'))->with('success', 'มอบหมายกรรมการเข้าห้องพรีเซนต์เรียบร้อยแล้ว');
         }
     }
 
@@ -528,7 +528,7 @@ class Admin extends BaseController
             $db->transComplete();
         }
         
-        return redirect()->to('/admin/rooms')->with('success', 'ถอดถอนกรรมการสำเร็จ');
+        return redirect()->to(base_url('admin/rooms'))->with('success', 'ถอดถอนกรรมการสำเร็จ');
     }
 
     public function assignPaper()
@@ -542,7 +542,7 @@ class Admin extends BaseController
             // Check if paper already assigned somewhere else
             $existing = $db->table('room_papers')->where('paper_id', $paperId)->get()->getRow();
             if ($existing) {
-                return redirect()->to('/admin/rooms')->with('error', 'บทความวิชาการนี้ได้รับการจัดห้องนำเสนอเรียบร้อยแล้ว');
+                return redirect()->to(base_url('admin/rooms'))->with('error', 'บทความวิชาการนี้ได้รับการจัดห้องนำเสนอเรียบร้อยแล้ว');
             }
 
             $db->transStart();
@@ -566,7 +566,7 @@ class Admin extends BaseController
 
             $db->transComplete();
 
-            return redirect()->to('/admin/rooms')->with('success', 'จัดสรรบทความเข้าห้องนำเสนอเรียบร้อยแล้ว');
+            return redirect()->to(base_url('admin/rooms'))->with('success', 'จัดสรรบทความเข้าห้องนำเสนอเรียบร้อยแล้ว');
         }
     }
 
@@ -584,7 +584,7 @@ class Admin extends BaseController
             $db->transComplete();
         }
 
-        return redirect()->to('/admin/rooms')->with('success', 'ถอนบทความออกจากห้องนำเสนอเรียบร้อยแล้ว');
+        return redirect()->to(base_url('admin/rooms'))->with('success', 'ถอนบทความออกจากห้องนำเสนอเรียบร้อยแล้ว');
     }
 
     // ==========================================
@@ -634,7 +634,7 @@ class Admin extends BaseController
 
         $db->transComplete();
 
-        return redirect()->to('/admin/payments')->with('success', 'อนุมัติการชำระเงินเรียบร้อยแล้ว');
+        return redirect()->to(base_url('admin/payments'))->with('success', 'อนุมัติการชำระเงินเรียบร้อยแล้ว');
     }
 
     public function rejectPayment($id)
@@ -653,6 +653,6 @@ class Admin extends BaseController
 
         $db->transComplete();
 
-        return redirect()->to('/admin/payments')->with('success', 'ปฏิเสธการชำระเงินเรียบร้อยแล้ว');
+        return redirect()->to(base_url('admin/payments'))->with('success', 'ปฏิเสธการชำระเงินเรียบร้อยแล้ว');
     }
 }

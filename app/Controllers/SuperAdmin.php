@@ -74,7 +74,7 @@ class SuperAdmin extends BaseController
             }
 
             $confModel->insert($data);
-            return redirect()->to('/superadmin/dashboard')->with('success', 'สร้างปีการจัดงานประชุมเรียบร้อยแล้ว');
+            return redirect()->to(base_url('superadmin/dashboard'))->with('success', 'สร้างปีการจัดงานประชุมเรียบร้อยแล้ว');
         }
     }
 
@@ -88,10 +88,10 @@ class SuperAdmin extends BaseController
             $confModel->where('is_active', 1)->set(['is_active' => 0])->update();
             // Activate selected
             $confModel->update($id, ['is_active' => 1]);
-            return redirect()->to('/superadmin/dashboard')->with('success', 'เปลี่ยนการประชุมปัจจุบันเป็นปี ' . $conference['year'] . ' เรียบร้อยแล้ว');
+            return redirect()->to(base_url('superadmin/dashboard'))->with('success', 'เปลี่ยนการประชุมปัจจุบันเป็นปี ' . $conference['year'] . ' เรียบร้อยแล้ว');
         }
 
-        return redirect()->to('/superadmin/dashboard')->with('error', 'ไม่พบการประชุมที่ระบุ');
+        return redirect()->to(base_url('superadmin/dashboard'))->with('error', 'ไม่พบการประชุมที่ระบุ');
     }
 
     public function assignAdmin()
@@ -107,11 +107,11 @@ class SuperAdmin extends BaseController
             // Check if already assigned
             $existing = $confAdminModel->where($data)->first();
             if ($existing) {
-                return redirect()->to('/superadmin/dashboard')->with('error', 'แอดมินผู้นี้ได้รับการแต่งตั้งให้ดูแลการประชุมปีนี้อยู่แล้ว');
+                return redirect()->to(base_url('superadmin/dashboard'))->with('error', 'แอดมินผู้นี้ได้รับการแต่งตั้งให้ดูแลการประชุมปีนี้อยู่แล้ว');
             }
 
             $confAdminModel->insert($data);
-            return redirect()->to('/superadmin/dashboard')->with('success', 'แต่งตั้งผู้ดูแลการประชุมประจำปีสำเร็จ');
+            return redirect()->to(base_url('superadmin/dashboard'))->with('success', 'แต่งตั้งผู้ดูแลการประชุมประจำปีสำเร็จ');
         }
     }
 
@@ -119,7 +119,7 @@ class SuperAdmin extends BaseController
     {
         $confAdminModel = new ConferenceAdminModel();
         $confAdminModel->delete($id);
-        return redirect()->to('/superadmin/dashboard')->with('success', 'ถอนสิทธิ์ผู้ดูแลการประชุมประจำปีเรียบร้อยแล้ว');
+        return redirect()->to(base_url('superadmin/dashboard'))->with('success', 'ถอนสิทธิ์ผู้ดูแลการประชุมประจำปีเรียบร้อยแล้ว');
     }
 
     public function deleteConference($id)
@@ -127,9 +127,9 @@ class SuperAdmin extends BaseController
         $confModel = new ConferenceModel();
         try {
             $confModel->delete($id);
-            return redirect()->to('/superadmin/dashboard')->with('success', 'ลบปีการประชุมเรียบร้อยแล้ว');
+            return redirect()->to(base_url('superadmin/dashboard'))->with('success', 'ลบปีการประชุมเรียบร้อยแล้ว');
         } catch (\Exception $e) {
-            return redirect()->to('/superadmin/dashboard')->with('error', 'ไม่สามารถลบการประชุมได้ เนื่องจากยังมีบทความหรือผลประเมินผูกอยู่');
+            return redirect()->to(base_url('superadmin/dashboard'))->with('error', 'ไม่สามารถลบการประชุมได้ เนื่องจากยังมีบทความหรือผลประเมินผูกอยู่');
         }
     }
 }

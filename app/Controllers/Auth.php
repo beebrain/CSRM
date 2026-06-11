@@ -21,7 +21,7 @@ class Auth extends BaseController
 
             if ($user && password_verify($password, $user['password'])) {
                 if ($user['is_verified'] == 0) {
-                    return redirect()->to('/auth/login')->with('error', 'กรุณายืนยันอีเมลของคุณก่อนเข้าสู่ระบบ');
+                    return redirect()->to(base_url('auth/login'))->with('error', 'กรุณายืนยันอีเมลของคุณก่อนเข้าสู่ระบบ');
                 }
 
                 // Set session data
@@ -37,7 +37,7 @@ class Auth extends BaseController
                 return $this->redirectUser($user['role']);
             }
 
-            return redirect()->to('/auth/login')->with('error', 'อีเมลหรือรหัสผ่านไม่ถูกต้อง');
+            return redirect()->to(base_url('auth/login'))->with('error', 'อีเมลหรือรหัสผ่านไม่ถูกต้อง');
         }
 
         return view('auth/login');
@@ -59,7 +59,7 @@ class Auth extends BaseController
             ];
 
             if (!$this->validate($rules)) {
-                return redirect()->to('/auth/register')->withInput()->with('errors', $this->validator->getErrors());
+                return redirect()->to(base_url('auth/register'))->withInput()->with('errors', $this->validator->getErrors());
             }
 
             $userModel = new UserModel();
@@ -103,7 +103,7 @@ class Auth extends BaseController
             $verifyUrl = base_url('auth/verify/' . $token);
             session()->setFlashdata('temp_verify_url', $verifyUrl);
 
-            return redirect()->to('/auth/login')->with('success', 'สมัครสมาชิกสำเร็จ! กรุณายืนยันการใช้งานผ่านอีเมลของคุณ');
+            return redirect()->to(base_url('auth/login'))->with('success', 'สมัครสมาชิกสำเร็จ! กรุณายืนยันการใช้งานผ่านอีเมลของคุณ');
         }
 
         return view('auth/register');
@@ -120,32 +120,32 @@ class Auth extends BaseController
                 'verification_token' => null
             ]);
 
-            return redirect()->to('/auth/login')->with('success', 'ยืนยันอีเมลสำเร็จแล้ว! คุณสามารถเข้าสู่ระบบได้ทันที');
+            return redirect()->to(base_url('auth/login'))->with('success', 'ยืนยันอีเมลสำเร็จแล้ว! คุณสามารถเข้าสู่ระบบได้ทันที');
         }
 
-        return redirect()->to('/auth/login')->with('error', 'โทเค็นสำหรับยืนยันตัวตนไม่ถูกต้องหรือหมดอายุ');
+        return redirect()->to(base_url('auth/login'))->with('error', 'โทเค็นสำหรับยืนยันตัวตนไม่ถูกต้องหรือหมดอายุ');
     }
 
     public function logout()
     {
         session()->destroy();
-        return redirect()->to('/auth/login');
+        return redirect()->to(base_url('auth/login'));
     }
 
     private function redirectUser($role)
     {
         switch ($role) {
             case 'superadmin':
-                return redirect()->to('/superadmin/dashboard');
+                return redirect()->to(base_url('superadmin/dashboard'));
             case 'admin':
-                return redirect()->to('/admin/dashboard');
+                return redirect()->to(base_url('admin/dashboard'));
             case 'reviewer':
-                return redirect()->to('/reviewer/dashboard');
+                return redirect()->to(base_url('reviewer/dashboard'));
             case 'committee':
-                return redirect()->to('/committee/dashboard');
+                return redirect()->to(base_url('committee/dashboard'));
             case 'author':
             default:
-                return redirect()->to('/author/dashboard');
+                return redirect()->to(base_url('author/dashboard'));
         }
     }
 }

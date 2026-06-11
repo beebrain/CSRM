@@ -81,7 +81,7 @@ class Author extends BaseController
     public function submitPaper()
     {
         if (!$this->activeConf) {
-            return redirect()->to('/author/dashboard')->with('error', 'ขออภัย ขณะนี้ไม่มีการเปิดรับสมัครงานประชุมวิชาการประจำปี');
+            return redirect()->to(base_url('author/dashboard'))->with('error', 'ขออภัย ขณะนี้ไม่มีการเปิดรับสมัครงานประชุมวิชาการประจำปี');
         }
 
         if ($this->request->is('post')) {
@@ -93,7 +93,7 @@ class Author extends BaseController
             ];
 
             if (!$this->validate($rules)) {
-                return redirect()->to('/author/dashboard')->withInput()->with('errors', $this->validator->getErrors());
+                return redirect()->to(base_url('author/dashboard'))->withInput()->with('errors', $this->validator->getErrors());
             }
 
             $pdf = $this->request->getFile('pdf_file');
@@ -116,7 +116,7 @@ class Author extends BaseController
                 'payment_status' => 'unpaid'
             ]);
 
-            return redirect()->to('/author/dashboard')->with('success', 'ส่งบทความวิชาการเรียบร้อยแล้ว');
+            return redirect()->to(base_url('author/dashboard'))->with('success', 'ส่งบทความวิชาการเรียบร้อยแล้ว');
         }
     }
 
@@ -126,7 +126,7 @@ class Author extends BaseController
         
         // Find unpaid papers for the current active conference year
         if (!$this->activeConf) {
-            return redirect()->to('/author/dashboard')->with('error', 'ขออภัย ไม่มีงานประชุมที่เปิดลงทะเบียนชำระเงินขณะนี้');
+            return redirect()->to(base_url('author/dashboard'))->with('error', 'ขออภัย ไม่มีงานประชุมที่เปิดลงทะเบียนชำระเงินขณะนี้');
         }
 
         $unpaidPapers = $paperModel->getDetails([
@@ -151,7 +151,7 @@ class Author extends BaseController
             ];
 
             if (!$this->validate($rules)) {
-                return redirect()->to('/author/payment')->with('errors', $this->validator->getErrors());
+                return redirect()->to(base_url('author/payment'))->with('errors', $this->validator->getErrors());
             }
 
             $slip = $this->request->getFile('slip_file');
@@ -187,10 +187,10 @@ class Author extends BaseController
             $db->transComplete();
 
             if ($db->transStatus() === false) {
-                return redirect()->to('/author/payment')->with('error', 'เกิดข้อผิดพลาดในการแนบหลักฐานการโอนเงิน');
+                return redirect()->to(base_url('author/payment'))->with('error', 'เกิดข้อผิดพลาดในการแนบหลักฐานการโอนเงิน');
             }
 
-            return redirect()->to('/author/dashboard')->with('success', 'แนบหลักฐานการชำระเงินเรียบร้อยแล้ว รอแอดมินดำเนินการตรวจสอบ');
+            return redirect()->to(base_url('author/dashboard'))->with('success', 'แนบหลักฐานการชำระเงินเรียบร้อยแล้ว รอแอดมินดำเนินการตรวจสอบ');
         }
     }
 
@@ -200,7 +200,7 @@ class Author extends BaseController
             $paperIds = $this->request->getPost('paper_ids');
             
             if (empty($paperIds)) {
-                return redirect()->to('/author/payment')->with('error', 'กรุณาเลือกบทความอย่างน้อย 1 รายการเพื่อชำระเงิน');
+                return redirect()->to(base_url('author/payment'))->with('error', 'กรุณาเลือกบทความอย่างน้อย 1 รายการเพื่อชำระเงิน');
             }
 
             $db = \Config\Database::connect();
@@ -231,14 +231,14 @@ class Author extends BaseController
 
             $db->transComplete();
 
-            return redirect()->to('/author/dashboard')->with('success', 'ชำระเงินสำเร็จ (เลขอ้างอิง: ' . $ref . ') บทความของคุณเปลี่ยนสถานะเป็นชำระเงินแล้ว!');
+            return redirect()->to(base_url('author/dashboard'))->with('success', 'ชำระเงินสำเร็จ (เลขอ้างอิง: ' . $ref . ') บทความของคุณเปลี่ยนสถานะเป็นชำระเงินแล้ว!');
         }
     }
 
     public function submitRevision()
     {
         if (!$this->activeConf) {
-            return redirect()->to('/author/dashboard')->with('error', 'ขออภัย ขณะนี้ไม่มีการเปิดรับสมัครงานประชุมวิชาการประจำปี');
+            return redirect()->to(base_url('author/dashboard'))->with('error', 'ขออภัย ขณะนี้ไม่มีการเปิดรับสมัครงานประชุมวิชาการประจำปี');
         }
 
         if ($this->request->is('post')) {
@@ -248,7 +248,7 @@ class Author extends BaseController
             // Check if paper belongs to this author and needs revision
             $paper = $paperModel->where(['id' => $paperId, 'author_id' => session()->get('user_id')])->first();
             if (!$paper || $paper['status'] !== 'revision_required') {
-                return redirect()->to('/author/dashboard')->with('error', 'ไม่พบความต้องการแก้ไขบทความนี้ หรือคุณไม่มีสิทธิ์');
+                return redirect()->to(base_url('author/dashboard'))->with('error', 'ไม่พบความต้องการแก้ไขบทความนี้ หรือคุณไม่มีสิทธิ์');
             }
 
             $rules = [
@@ -257,7 +257,7 @@ class Author extends BaseController
             ];
 
             if (!$this->validate($rules)) {
-                return redirect()->to('/author/dashboard')->with('errors', $this->validator->getErrors());
+                return redirect()->to(base_url('author/dashboard'))->with('errors', $this->validator->getErrors());
             }
 
             $pdf = $this->request->getFile('pdf_file');
@@ -287,10 +287,10 @@ class Author extends BaseController
             $db->transComplete();
 
             if ($db->transStatus() === false) {
-                return redirect()->to('/author/dashboard')->with('error', 'เกิดข้อผิดพลาดในการส่งบทความแก้ไข');
+                return redirect()->to(base_url('author/dashboard'))->with('error', 'เกิดข้อผิดพลาดในการส่งบทความแก้ไข');
             }
 
-            return redirect()->to('/author/dashboard')->with('success', 'ส่งบทความวิชาการฉบับแก้ไขเรียบร้อยแล้ว รอผู้ทรงคุณวุฒิประเมินผลอีกครั้ง');
+            return redirect()->to(base_url('author/dashboard'))->with('success', 'ส่งบทความวิชาการฉบับแก้ไขเรียบร้อยแล้ว รอผู้ทรงคุณวุฒิประเมินผลอีกครั้ง');
         }
     }
 }

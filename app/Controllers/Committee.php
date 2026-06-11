@@ -78,7 +78,7 @@ class Committee extends BaseController
                      ->getRowArray();
 
         if (!$review) {
-            return redirect()->to('/committee/dashboard')->with('error', 'ไม่พบรายการประเมินที่ระบุ');
+            return redirect()->to(base_url('committee/dashboard'))->with('error', 'ไม่พบรายการประเมินที่ระบุ');
         }
 
         // Fetch dynamic criteria for Round 2
@@ -86,7 +86,7 @@ class Committee extends BaseController
         $criteria = $critModel->where(['conference_id' => $review['conference_id'], 'round' => 2])->findAll();
 
         if (empty($criteria)) {
-            return redirect()->to('/committee/dashboard')->with('error', 'แอดมินยังไม่ได้ระบุเกณฑ์ประเมินรอบที่ 2 (การนำเสนอ) กรุณาแจ้งผู้ดูแลระบบ');
+            return redirect()->to(base_url('committee/dashboard'))->with('error', 'แอดมินยังไม่ได้ระบุเกณฑ์ประเมินรอบที่ 2 (การนำเสนอ) กรุณาแจ้งผู้ดูแลระบบ');
         }
 
         // If completed, fetch previous scores
@@ -116,7 +116,7 @@ class Committee extends BaseController
             // Check review access
             $review = $db->table('presentation_reviews')->where(['id' => $reviewId, 'committee_id' => session()->get('user_id')])->get()->getRowArray();
             if (!$review) {
-                return redirect()->to('/committee/dashboard')->with('error', 'ไม่มีสิทธิ์เข้าถึงการประเมินนี้');
+                return redirect()->to(base_url('committee/dashboard'))->with('error', 'ไม่มีสิทธิ์เข้าถึงการประเมินนี้');
             }
 
             $criteriaScores = $this->request->getPost('scores'); // array [criteria_id => score]
@@ -179,10 +179,10 @@ class Committee extends BaseController
             $db->transComplete();
 
             if ($db->transStatus() === false) {
-                return redirect()->to('/committee/dashboard')->with('error', 'เกิดข้อผิดพลาดในการบันทึกผลการประเมิน');
+                return redirect()->to(base_url('committee/dashboard'))->with('error', 'เกิดข้อผิดพลาดในการบันทึกผลการประเมิน');
             }
 
-            return redirect()->to('/committee/dashboard')->with('success', 'บันทึกผลการประเมินนำเสนอเรียบร้อยแล้ว');
+            return redirect()->to(base_url('committee/dashboard'))->with('success', 'บันทึกผลการประเมินนำเสนอเรียบร้อยแล้ว');
         }
     }
 }
