@@ -36,6 +36,7 @@
     </div>
     <div class="navbar-menu">
       <span class="text-muted">ยินดีต้อนรับ, <strong><?= session()->get('first_name') ?></strong></span>
+      <a href="<?= base_url('admin/dashboard'); ?>" class="btn btn-primary btn-sm" style="font-size: 0.85rem; padding: 0.5rem 1rem;">💼 เข้าสู่ระบบจัดการหลัก (Admin Panel)</a>
       <a href="<?= base_url('auth/logout'); ?>" class="btn btn-secondary btn-sm">ออกจากระบบ</a>
     </div>
   </nav>

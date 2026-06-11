@@ -21,18 +21,26 @@ class Admin extends BaseController
         parent::initController($request, $response, $logger);
 
         // Access check
-        if (!session()->get('logged_in') || session()->get('role') !== 'admin') {
+        $role = session()->get('role');
+        if (!session()->get('logged_in') || ($role !== 'admin' && $role !== 'superadmin')) {
             throw new \CodeIgniter\Router\Exceptions\RedirectException('auth/login');
         }
 
         // Fetch conferences this admin has access to
         $db = \Config\Database::connect();
-        $this->allowedConfs = $db->table('conference_admins')
-                                 ->select('conferences.*')
-                                 ->join('conferences', 'conferences.id = conference_admins.conference_id')
-                                 ->where('conference_admins.user_id', session()->get('user_id'))
-                                 ->get()
-                                 ->getResultArray();
+        if ($role === 'superadmin') {
+            // Superadmin has access to ALL conferences
+            $confModel = new ConferenceModel();
+            $this->allowedConfs = $confModel->orderBy('year', 'DESC')->findAll();
+        } else {
+            // Normal admin has access to only assigned conferences
+            $this->allowedConfs = $db->table('conference_admins')
+                                     ->select('conferences.*')
+                                     ->join('conferences', 'conferences.id = conference_admins.conference_id')
+                                     ->where('conference_admins.user_id', session()->get('user_id'))
+                                     ->get()
+                                     ->getResultArray();
+        }
 
         if (empty($this->allowedConfs)) {
             // No permission to any conference
