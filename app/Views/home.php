@@ -301,6 +301,11 @@
       <div class="hero-glow"></div>
       <div class="hero-tag">มหาวิทยาลัยราชภัฏพิบูลสงคราม • Pibulsongkram Rajabhat University</div>
       
+      <!-- Banner Image -->
+      <div class="hero-banner-container" style="max-width: 800px; margin: 0 auto 2.5rem auto; border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--card-border); box-shadow: var(--shadow);">
+        <img src="<?= base_url('images/conference_hero_banner.png'); ?>" alt="CSRM Conference Banner" style="width: 100%; height: auto; display: block;">
+      </div>
+      
       <?php if ($activeConf): ?>
         <h1 class="hero-title">การประชุมวิชาการระดับชาติ ประจำปี <span>พ.ศ. <?= esc($activeConf['year']) ?></span></h1>
         <h2 style="font-size: 1.35rem; font-weight: 600; color: var(--psru-green); margin-bottom: 1.5rem;"><?= esc($activeConf['title']) ?></h2>
