@@ -380,6 +380,11 @@ class Admin extends BaseController
                 return redirect()->to(base_url('admin/dashboard'))->with('error', 'ต้องเลือกผู้ทรงคุณวุฒิอย่างน้อย 3 คน');
             }
 
+            // Check duplicate reviewers
+            if (count($reviewerIds) !== count(array_unique($reviewerIds))) {
+                return redirect()->to(base_url('admin/dashboard'))->with('error', 'ห้ามเลือกผู้ทรงคุณวุฒิซ้ำกันในบทความเดียวกัน');
+            }
+
             $db = \Config\Database::connect();
 
             // Server-side Conflict of Interest (COI) check

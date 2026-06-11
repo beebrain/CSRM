@@ -322,6 +322,7 @@
                                   $affText = $r['affiliation'] ? ' [' . $r['affiliation'] . ']' : ' [ไม่ระบุสถาบัน]';
                                 ?>
                                 <option value="<?= $r['id'] ?>" 
+                                        data-uni-conflict="<?= $isSameAffiliation ? 'true' : 'false' ?>"
                                         <?= $isSameAffiliation ? 'disabled style="color: var(--danger); font-style: italic;"' : ($isMatch ? 'style="color: var(--success); font-weight: 600;"' : '') ?>>
                                   <?= esc($r['first_name']) ?> <?= esc($r['last_name']) ?><?= esc($affText) ?><?= esc($matchText) ?><?= $isSameAffiliation ? ' ⚠️ สถาบันเดียวกัน (ห้ามเลือก)' : '' ?>
                                 </option>
@@ -447,6 +448,52 @@
               filterStatus.value = 'all';
               filterReviewer.value = 'all';
               applyFilters();
+          });
+      }
+
+      // Monitor duplicate reviewer selections in the same assignment form
+      const assignmentForms = document.querySelectorAll('form[action*="assignReviewers"]');
+      assignmentForms.forEach(form => {
+          const selects = form.querySelectorAll('select[name="reviewer_ids[]"]');
+          selects.forEach(select => {
+              select.addEventListener('change', function() {
+                  updateReviewerDropdownOptions(form);
+              });
+          });
+          // Initial update
+          updateReviewerDropdownOptions(form);
+      });
+
+      function updateReviewerDropdownOptions(form) {
+          const selects = form.querySelectorAll('select[name="reviewer_ids[]"]');
+          const selectedValues = Array.from(selects).map(s => s.value).filter(val => val !== '');
+
+          selects.forEach(select => {
+              const currentValue = select.value;
+              const options = select.querySelectorAll('option');
+              options.forEach(opt => {
+                  const optVal = opt.value;
+                  if (optVal === '') return;
+
+                  const hasUniConflict = opt.getAttribute('data-uni-conflict') === 'true';
+                  const isSelectedElsewhere = selectedValues.includes(optVal) && optVal !== currentValue;
+
+                  if (hasUniConflict || isSelectedElsewhere) {
+                      opt.disabled = true;
+                      if (isSelectedElsewhere && !hasUniConflict) {
+                          opt.style.color = 'var(--text-secondary)';
+                          opt.style.fontStyle = 'italic';
+                          if (!opt.textContent.includes(' (เลือกแล้ว)')) {
+                              opt.textContent = opt.textContent + ' (เลือกแล้ว)';
+                          }
+                      }
+                  } else {
+                      opt.disabled = false;
+                      opt.style.color = '';
+                      opt.style.fontStyle = '';
+                      opt.textContent = opt.textContent.replace(' (เลือกแล้ว)', '');
+                  }
+              });
           });
       }
 
