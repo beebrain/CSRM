@@ -624,10 +624,10 @@
   <!-- Contact & Footer Section -->
   <footer id="contact">
     <div style="max-width: 800px; margin: 0 auto;">
-      <h3 style="color: var(--psru-green); font-weight: 700; margin-bottom: 0.75rem;">สำนักวิจัยและพัฒนา มหาวิทยาลัยราชภัฏพิบูลสงคราม</h3>
+      <h3 style="color: var(--psru-green); font-weight: 700; margin-bottom: 0.75rem;">สาขาวิชาคณิตศาสตร์ คณะวิทยาศาสตร์และเทคโนโลยี มหาวิทยาลัยราชภัฏพิบูลสงคราม</h3>
       <p class="text-muted" style="font-size: 0.85rem; line-height: 1.6; margin-bottom: 1.5rem;">
         เลขที่ 156 หมู่ 5 ถนนเลี่ยงเมืองพิษณุโลก (ส่วนทะเลแก้ว) ตำบลพลายชุมพล อำเภอเมือง จังหวัดพิษณุโลก 65000<br>
-        โทรศัพท์: 0-5526-7000 ต่อ สำนักวิจัยและพัฒนา | อีเมล: research@psru.ac.th
+        โทรศัพท์: 0-5526-7000 ต่อ คณะวิทยาศาสตร์และเทคโนโลยี | อีเมล: science@psru.ac.th
       </p>
       <div style="border-top: 1px dashed var(--card-border); padding-top: 1.5rem; font-size: 0.8rem; color: var(--text-secondary);">
         &copy; 2026 CSRM System. All Rights Reserved. Pibulsongkram Rajabhat University.
