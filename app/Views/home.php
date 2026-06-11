@@ -370,31 +370,106 @@
 
     <!-- Tracks/Disciplines Section -->
     <section id="tracks" class="animate-fade-in" style="animation-delay: 0.4s; margin-top: 4rem;">
-      <h2 class="section-title">📚 หัวข้อผลงานวิจัยที่เปิดรับ (Conference Tracks)</h2>
-      <p class="section-subtitle">สาขาวิชาการที่รองรับการรับบทความในการประชุมวิชาการประจำปีนี้</p>
+      <h2 class="section-title">📚 หัวข้อการประชุมและวิจัย (Conference Tracks)</h2>
+      <p class="section-subtitle">สาขาวิชาการทางคณิตศาสตร์และศึกษาศาสตร์ที่เปิดรับเสนอผลงานบทความวิชาการ</p>
       
-      <div class="grid-3">
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem;">
+        <!-- 1. Algebra -->
         <div class="feature-card">
           <div class="feature-icon">🧮</div>
-          <h3>Theory & Theoretical Math</h3>
+          <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--psru-green);">พีชคณิต (Algebra)</h3>
           <p class="text-muted" style="font-size: 0.85rem; line-height: 1.6;">
-            คณิตศาสตร์บริสุทธิ์ คณิตศาสตร์ทฤษฎี พีชคณิต ทฤษฎีจำนวน การวิเคราะห์เชิงจริง และหัวข้อที่เกี่ยวข้องทางคณิตศาสตร์เชิงลึก
+            การศึกษาโครงสร้าง ความสัมพันธ์ และปริมาณ
           </p>
         </div>
         
+        <!-- 2. Analysis -->
+        <div class="feature-card">
+          <div class="feature-icon">📈</div>
+          <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--psru-green);">คณิตวิเคราะห์ (Analysis)</h3>
+          <p class="text-muted" style="font-size: 0.85rem; line-height: 1.6;">
+            ทฤษฎีลิมิต อนุพันธ์ อินทิกรัล และอนุกรมอนันต์
+          </p>
+        </div>
+        
+        <!-- 3. Geometry -->
+        <div class="feature-card">
+          <div class="feature-icon">📐</div>
+          <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--psru-green);">เรขาคณิต (Geometry)</h3>
+          <p class="text-muted" style="font-size: 0.85rem; line-height: 1.6;">
+            คุณสมบัติของรูปร่าง ขนาด ตำแหน่งสัมพัทธ์ของรูปทรง
+          </p>
+        </div>
+        
+        <!-- 4. Number Theory -->
+        <div class="feature-card">
+          <div class="feature-icon">🔢</div>
+          <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--psru-green);">ทฤษฎีจำนวน (Number Theory)</h3>
+          <p class="text-muted" style="font-size: 0.85rem; line-height: 1.6;">
+            คุณสมบัติของจำนวนเต็ม
+          </p>
+        </div>
+        
+        <!-- 5. Probability and Statistics -->
         <div class="feature-card">
           <div class="feature-icon">📊</div>
-          <h3>Applied Math & Statistics</h3>
+          <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--psru-green);">ความน่าจะเป็นและสถิติ</h3>
           <p class="text-muted" style="font-size: 0.85rem; line-height: 1.6;">
-            คณิตศาสตร์ประยุกต์ สถิติประยุกต์ การวิจัยการดำเนินงาน คณิตศาสตร์ประกันภัย และการประยุกต์แบบจำลองทางคณิตศาสตร์ในอุตสาหกรรม
+            การวิเคราะห์และการตีความข้อมูล
           </p>
         </div>
         
+        <!-- 6. Mathematical Logic -->
         <div class="feature-card">
-          <div class="feature-icon">💻</div>
-          <h3>Computer Science & IT</h3>
+          <div class="feature-icon">⚖️</div>
+          <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--psru-green);">ตรรกศาสตร์คณิตศาสตร์</h3>
           <p class="text-muted" style="font-size: 0.85rem; line-height: 1.6;">
-            วิทยาการคอมพิวเตอร์ เทคโนโลยีสารสนเทศ ปัญญาประดิษฐ์ (AI) การประมวลผลระบบคลาวด์ การทำเหมืองข้อมูล และวิศวกรรมซอฟต์แวร์
+            การศึกษาเกี่ยวกับระบบรูปแบบและการให้เหตุผล
+          </p>
+        </div>
+        
+        <!-- 7. Applied Mathematics -->
+        <div class="feature-card">
+          <div class="feature-icon">⚙️</div>
+          <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--psru-green);">คณิตศาสตร์ประยุกต์</h3>
+          <p class="text-muted" style="font-size: 0.85rem; line-height: 1.6;">
+            การประยุกต์ใช้วิธีการทางคณิตศาสตร์สาขาอื่นๆ
+          </p>
+        </div>
+        
+        <!-- 8. Combinatorics -->
+        <div class="feature-card">
+          <div class="feature-icon">🧩</div>
+          <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--psru-green);">คอมบินาทอริก (Combinatorics)</h3>
+          <p class="text-muted" style="font-size: 0.85rem; line-height: 1.6;">
+            การนับ การจัดเรียง และโครงสร้าง
+          </p>
+        </div>
+        
+        <!-- 9. Discrete Mathematics -->
+        <div class="feature-card">
+          <div class="feature-icon">💠</div>
+          <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--psru-green);">คณิตศาสตร์ไม่ต่อเนื่อง</h3>
+          <p class="text-muted" style="font-size: 0.85rem; line-height: 1.6;">
+            โครงสร้างทางคณิตศาสตร์ที่มีลักษณะไม่ต่อเนื่อง
+          </p>
+        </div>
+        
+        <!-- 10. Differential Equations -->
+        <div class="feature-card">
+          <div class="feature-icon">🌀</div>
+          <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--psru-green);">สมการเชิงอนุพันธ์</h3>
+          <p class="text-muted" style="font-size: 0.85rem; line-height: 1.6;">
+            สมการที่เกี่ยวข้องกับฟังก์ชันและอนุพันธ์
+          </p>
+        </div>
+        
+        <!-- 11. Mathematics Education -->
+        <div class="feature-card">
+          <div class="feature-icon">🏫</div>
+          <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--psru-green);">คณิตศาสตรศึกษา</h3>
+          <p class="text-muted" style="font-size: 0.85rem; line-height: 1.6;">
+            การปฏิบัติและทฤษฎีการสอนและการเรียนรู้คณิตศาสตร์
           </p>
         </div>
       </div>
