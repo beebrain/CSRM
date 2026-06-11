@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard - CSRM</title>
   <link rel="stylesheet" href="<?= base_url('css/style.css'); ?>">
+  <!-- DataTables & jQuery CDN -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
   <style>
     .grid-stats {
       display: grid;
@@ -156,57 +160,121 @@
       </div>
     </div>
 
-        <!-- Papers List grouped by Track (Accordion List) -->
-    <?php
-      // Group papers by track_name
-      $groupedPapers = [];
-      foreach ($papers as $paper) {
-          $track = $paper['track_name'] ?: 'อื่นๆ';
-          $groupedPapers[$track][] = $paper;
-      }
-    ?>
-
+                <!-- Papers List grouped by Track (Accordion List) -->
     <style>
-      .accordion-header:hover {
-          background: rgba(37, 99, 235, 0.03);
+      /* Premium DataTable Overrides */
+      .dataTables_wrapper .dataTables_length, 
+      .dataTables_wrapper .dataTables_filter, 
+      .dataTables_wrapper .dataTables_info, 
+      .dataTables_wrapper .dataTables_paginate {
+          color: var(--text-secondary) !important;
+          font-size: 0.85rem;
+          margin-top: 1.25rem;
       }
-      .paper-accordion-item.open {
-          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-          border-color: rgba(37, 99, 235, 0.4) !important;
+      .dataTables_wrapper .dataTables_paginate .paginate_button {
+          border-radius: var(--radius-sm) !important;
+          border: 1px solid var(--card-border) !important;
+          background: #ffffff !important;
+          color: var(--text-primary) !important;
+          padding: 0.35rem 0.75rem !important;
+          margin-left: 0.25rem !important;
+          transition: var(--transition);
       }
-      .accordion-arrow {
+      .dataTables_wrapper .dataTables_paginate .paginate_button.current, 
+      .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+          background: var(--primary-gradient) !important;
+          color: #ffffff !important;
+          border-color: var(--primary) !important;
+          box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15) !important;
+      }
+      .dataTables_wrapper .dataTables_paginate .paginate_button.disabled {
+          opacity: 0.5;
+          cursor: default;
+      }
+      table.dataTable {
+          border-collapse: collapse !important;
+          border-spacing: 0;
+          width: 100% !important;
+          margin: 1.5rem 0 !important;
+          border: 1px solid var(--card-border) !important;
+          border-radius: var(--radius-sm);
+          overflow: hidden;
+      }
+      table.dataTable thead th {
+          background: #f8fafc !important;
+          color: var(--text-secondary) !important;
+          font-weight: 600 !important;
+          font-size: 0.85rem !important;
+          text-transform: uppercase !important;
+          letter-spacing: 0.05em !important;
+          border-bottom: 2px solid var(--card-border) !important;
+      }
+      table.dataTable th, table.dataTable td {
+          padding: 1rem 1.25rem !important;
+          border-bottom: 1px solid var(--card-border) !important;
+      }
+      table.dataTable.no-footer {
+          border-bottom: 1px solid var(--card-border) !important;
+      }
+      table.dataTable tbody tr {
+          background-color: #ffffff !important;
+          cursor: pointer;
+          transition: var(--transition);
+      }
+      table.dataTable tbody tr:hover {
+          background-color: rgba(37, 99, 235, 0.02) !important;
+      }
+      .dataTables_filter {
+          display: none !important; /* Hide default search bar since we have a custom one */
+      }
+      
+      /* Modal Styles */
+      .modal-content {
+          max-height: 90vh;
+          display: flex;
+          flex-direction: column;
+      }
+      #modal-body {
+          overflow-y: auto;
+          max-height: 75vh;
+          padding-right: 0.5rem;
+      }
+      /* Loading Spinner */
+      .spinner {
           display: inline-block;
-          font-size: 0.7rem;
-          transition: transform 0.2s;
-          color: var(--text-secondary);
+          width: 40px;
+          height: 40px;
+          border: 4px solid rgba(0,0,0,0.05);
+          border-radius: 50%;
+          border-top-color: var(--primary);
+          animation: spin 1s ease-in-out infinite;
+      }
+      @keyframes spin {
+          to { transform: rotate(360deg); }
       }
     </style>
 
-    <?php if (empty($papers)): ?>
-      <div class="card text-center text-muted" style="padding: 3rem;">
-        ยังไม่มีการส่งบทความเข้าร่วมในปีนี้
-      </div>
-    <?php else: ?>
-      <div id="no-results-box" class="card text-center text-muted" style="display: none; padding: 3rem; margin-bottom: 1.5rem;">
-        ไม่พบข้อมูลบทความวิชาการที่ตรงกับเงื่อนไขการค้นหา
-      </div>
-
-      <?php foreach ($groupedPapers as $trackName => $trackPapers): ?>
-        <div class="track-group-section mb-4" data-track-name="<?= esc($trackName) ?>">
-          <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--primary); border-left: 4px solid var(--primary); padding-left: 0.75rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
-            📚 กลุ่มศาสตร์: <?= esc($trackName) ?>
-            <span class="badge track-badge-count" style="background: rgba(37, 99, 235, 0.1); color: var(--primary); font-size: 0.8rem; font-weight: 600; border: none; padding: 0.2rem 0.5rem;">
-              <?= count($trackPapers) ?> บทความ
-            </span>
-          </h3>
-
-          <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 2rem;">
-            <?php foreach ($trackPapers as $paper): ?>
+    <!-- Papers List (DataTable) -->
+    <div class="card">
+      <h2 style="margin-bottom: 1.5rem;">📄 รายการบทความวิชาการประจำปี</h2>
+      
+      <div class="table-responsive" style="border: none; padding: 0;">
+        <table id="papers-table" class="display" style="width:100%;">
+          <thead>
+            <tr>
+              <th>ชื่อบทความ / ผู้แต่ง</th>
+              <th>กลุ่มศาสตร์ / สาขา</th>
+              <th>ผู้ทรงคุณวุฒิประเมิน</th>
+              <th>สถานะประเมิน</th>
+              <th>การชำระเงิน</th>
+              <th style="width: 80px; text-align: center;">จัดการ</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php foreach ($papers as $paper): ?>
               <?php 
                 $assigns = $paperAssignments[$paper['id']];
                 $reviewerIdsStr = implode(',', array_map(function($a) { return $a['reviewer_id']; }, $assigns));
-                
-                // Calculate reviewer status
                 $assignedCount = count($assigns);
                 $completedCount = 0;
                 foreach ($assigns as $a) {
@@ -215,462 +283,477 @@
                     }
                 }
               ?>
-              
-              <div class="paper-accordion-item"
-                   style="border: 1px solid var(--card-border); border-radius: var(--radius-sm); background: #ffffff; overflow: hidden; transition: var(--transition);"
-                   data-title="<?= esc(mb_strtolower($paper['title'])) ?>"
-                   data-author-name="<?= esc(mb_strtolower($paper['author_first_name'] . ' ' . $paper['author_last_name'])) ?>"
-                   data-author-affiliation="<?= esc(mb_strtolower($paper['author_affiliation'] ?: '')) ?>"
-                   data-author-email="<?= esc(mb_strtolower($paper['author_email'])) ?>"
-                   data-keywords="<?= esc(mb_strtolower($paper['keywords'] ?: '')) ?>"
-                   data-status="<?= esc($paper['status']) ?>"
-                   data-reviewers="<?= esc($reviewerIdsStr) ?>">
+              <tr onclick="openPaperModal(<?= $paper['id'] ?>)">
+                <!-- Paper Title & Author -->
+                <td>
+                  <div style="font-weight: 600; font-size: 0.95rem; color: var(--text-primary); line-height: 1.4;"><?= esc($paper['title']) ?></div>
+                  <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.25rem;">
+                    ผู้เขียน: <strong><?= esc($paper['author_first_name']) ?> <?= esc($paper['author_last_name']) ?></strong>
+                  </div>
+                </td>
                 
-                <!-- Accordion Header (1 Row) -->
-                <div class="accordion-header" 
-                     style="padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none; transition: background 0.2s;"
-                     onclick="toggleAccordion(this)">
-                  
-                  <div style="display: flex; align-items: center; gap: 1.25rem; flex: 1; min-width: 0;">
-                    <!-- Arrow indicator -->
-                    <span class="accordion-arrow">▶</span>
-                    
-                    <div style="min-width: 0; flex: 1;">
-                      <!-- Title -->
-                      <div class="paper-title-text" style="font-weight: 600; font-size: 1.05rem; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 1.5rem;">
-                        <?= esc($paper['title']) ?>
-                      </div>
-                      <!-- Discipline / Branch -->
-                      <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.15rem; display: flex; align-items: center; gap: 0.5rem;">
-                        <span>📂 <?= esc($paper['discipline_name']) ?></span>
-                        <?php if (!empty($paper['keywords'])): ?>
-                          <span style="color: #cbd5e1;">|</span>
-                          <span style="font-size: 0.75rem; color: var(--text-secondary);">🔑 <?= esc($paper['keywords']) ?></span>
-                        <?php endif; ?>
-                      </div>
-                    </div>
+                <!-- Track / Discipline -->
+                <td>
+                  <span style="font-weight: 600; font-size: 0.8rem; color: var(--primary); background: rgba(37, 99, 235, 0.08); padding: 0.15rem 0.4rem; border-radius: 4px;">
+                    <?= esc($paper['track_name']) ?>
+                  </span>
+                  <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.35rem;">
+                    📂 <?= esc($paper['discipline_name']) ?>
                   </div>
-
-                  <!-- Right Side Status Icons / Badges -->
-                  <div style="display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0;">
-                    <!-- Reviewer Status Icon -->
-                    <?php if ($assignedCount === 0): ?>
-                      <span class="badge" style="background: rgba(220, 38, 38, 0.08); color: var(--danger); font-size: 0.75rem; border: 1px solid rgba(220, 38, 38, 0.15); padding: 0.25rem 0.6rem; font-weight: 600;">
-                        👤❓ ยังไม่ระบุผู้ประเมิน
-                      </span>
-                    <?php elseif ($completedCount < $assignedCount): ?>
-                      <span class="badge" style="background: rgba(217, 119, 6, 0.08); color: var(--warning); font-size: 0.75rem; border: 1px solid rgba(217, 119, 6, 0.15); padding: 0.25rem 0.6rem; font-weight: 600;">
-                        ⏳ มอบหมายแล้ว (ประเมินแล้ว <?= $completedCount ?>/<?= $assignedCount ?> ท่าน)
-                      </span>
-                    <?php else: ?>
-                      <span class="badge" style="background: rgba(22, 163, 74, 0.08); color: var(--success); font-size: 0.75rem; border: 1px solid rgba(22, 163, 74, 0.15); padding: 0.25rem 0.6rem; font-weight: 600;">
-                        ✅ ประเมินครบถ้วน (<?= $completedCount ?>/<?= $assignedCount ?>)
-                      </span>
-                    <?php endif; ?>
-
-                    <!-- Paper Status Badge -->
-                    <?php if ($paper['status'] === 'submitted'): ?>
-                      <span class="badge badge-pending">รอตรวจ/รอจ่ายเงิน</span>
-                    <?php elseif ($paper['status'] === 'under_review'): ?>
-                      <span class="badge badge-info">กำลังประเมินรอบแรก</span>
-                    <?php elseif ($paper['status'] === 'revision_required'): ?>
-                      <span class="badge badge-pending" style="background: rgba(217, 119, 6, 0.15); color: var(--warning); border: 1px solid var(--warning);">ต้องการแก้ไข</span>
-                    <?php elseif ($paper['status'] === 'revised_submitted'): ?>
-                      <span class="badge badge-info" style="background: rgba(2, 132, 199, 0.15); color: var(--info); border: 1px solid var(--info);">ส่งฉบับแก้ไขแล้ว</span>
-                    <?php elseif ($paper['status'] === 'passed_round1'): ?>
-                      <span class="badge badge-success">ผ่านรอบแรก (รอพรีเซนต์)</span>
-                    <?php elseif ($paper['status'] === 'failed_round1'): ?>
-                      <span class="badge badge-danger">ไม่ผ่านรอบแรก</span>
-                    <?php elseif ($paper['status'] === 'passed_round2'): ?>
-                      <span class="badge badge-success" style="background: rgba(16, 185, 129, 0.3); border: 1px solid var(--success);">เสร็จสิ้นการนำเสนอ</span>
-                    <?php elseif ($paper['status'] === 'failed_round2'): ?>
-                      <span class="badge badge-danger">ไม่ผ่านการนำเสนอ</span>
-                    <?php endif; ?>
-
-                    <!-- Payment Badge -->
-                    <?php if ($paper['payment_status'] === 'paid'): ?>
-                      <span class="badge badge-success">ชำระเงินแล้ว</span>
-                    <?php elseif ($paper['payment_status'] === 'pending_verification'): ?>
-                      <span class="badge badge-pending">รออนุมัติสลิป</span>
-                    <?php else: ?>
-                      <span class="badge badge-danger">ยังไม่ชำระเงิน</span>
-                    <?php endif; ?>
-                  </div>
-
-                </div>
-
-                <!-- Accordion Content (Collapsed by default) -->
-                <div class="accordion-content" style="max-height: 0; overflow: hidden; transition: max-height 0.3s cubic-bezier(0.16, 1, 0.3, 1); background: #fafbfc; border-top: 0 solid var(--card-border);">
-                  <div style="padding: 1.5rem 1.75rem; border-top: 1px solid var(--card-border);">
-                    
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 2rem; flex-wrap: wrap;">
-                      <!-- Left Details Column -->
-                      <div style="flex: 1; min-width: 300px;">
-                        
-                        <!-- Paper Full Title -->
-                        <h4 style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.75rem; line-height: 1.4;">
-                          <?= esc($paper['title']) ?>
-                        </h4>
-
-                        <!-- Author Details -->
-                        <div style="background: #ffffff; border: 1px solid var(--card-border); padding: 0.75rem 1rem; border-radius: var(--radius-sm); margin-bottom: 1rem; display: flex; flex-direction: column; gap: 0.35rem;">
-                          <div style="font-size: 0.85rem; color: var(--text-secondary);">
-                            ผู้เขียน/ผู้ส่งผลงาน: <strong style="color: var(--text-primary);"><?= esc($paper['author_first_name']) ?> <?= esc($paper['author_last_name']) ?></strong> 
-                            <span class="text-muted">(<?= esc($paper['author_email']) ?>)</span>
-                          </div>
-                          <div style="font-size: 0.85rem; color: var(--text-secondary);">
-                            🏛️ สถาบันสังกัด: <strong style="color: var(--primary);"><?= esc($paper['author_affiliation'] ?: 'ไม่ระบุ') ?></strong>
-                          </div>
-                        </div>
-
-                        <!-- Abstract Collapsible -->
-                        <details style="margin-bottom: 1rem; border: 1px solid var(--card-border); border-radius: var(--radius-sm); background: #ffffff;">
-                          <summary style="font-size: 0.85rem; font-weight: 600; color: var(--primary); cursor: pointer; user-select: none; padding: 0.6rem 1rem;">
-                            📖 แสดงบทคัดย่อ (Abstract)
-                          </summary>
-                          <div style="font-size: 0.9rem; color: var(--text-secondary); border-top: 1px solid var(--card-border); padding: 1rem; white-space: pre-line; line-height: 1.6; background: #fafbfc;">
-                            <?= esc($paper['abstract']) ?>
-                          </div>
-                        </details>
-
-                        <!-- PDF Files and Revisions -->
-                        <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
-                          <a href="<?= base_url($paper['file_path']) ?>" target="_blank" class="btn btn-secondary btn-sm" style="padding: 0.35rem 0.75rem; font-size: 0.8rem; border-radius: 6px;">
-                            📖 เปิดอ่าน PDF (ฉบับส่งแรก)
-                          </a>
-
-                          <?php if (!empty($paperRevisions[$paper['id']])): ?>
-                            <details style="position: relative; display: inline-block;">
-                              <summary style="font-size: 0.8rem; font-weight: 600; color: var(--info); cursor: pointer; padding: 0.35rem 0.75rem; border: 1px solid var(--card-border); border-radius: 6px; background: #ffffff; list-style: none; display: flex; align-items: center; gap: 0.25rem;">
-                                🔄 ฉบับปรับปรุงแก้ไข (<?= count($paperRevisions[$paper['id']]) ?>) ▼
-                              </summary>
-                              <div class="card" style="position: absolute; z-index: 100; margin-top: 0.5rem; padding: 1rem; min-width: 300px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1); border: 1px solid var(--card-border); background: #ffffff;">
-                                <h4 style="font-size: 0.85rem; font-weight: 700; margin-bottom: 0.5rem; border-bottom: 1px solid var(--card-border); padding-bottom: 0.25rem; color: var(--text-primary);">ประวัติการส่งฉบับแก้ไข</h4>
-                                <ul style="padding-left: 1.25rem; margin: 0; font-size: 0.8rem; list-style-type: disc; color: var(--text-secondary);">
-                                  <?php foreach ($paperRevisions[$paper['id']] as $idx => $rev): ?>
-                                    <li style="margin-bottom: 0.5rem;">
-                                      <a href="<?= base_url($rev['file_path']) ?>" target="_blank" style="font-weight: 600; color: var(--primary);">ฉบับแก้ไข #<?= $idx + 1 ?></a>
-                                      <span style="font-size: 0.75rem; color: var(--text-secondary);">(<?= date('d M Y H:i', strtotime($rev['created_at'])) ?>)</span>
-                                      <?php if (!empty($rev['comments'])): ?>
-                                        <div style="font-style: italic; color: var(--text-secondary); margin-top: 0.15rem; line-height: 1.3; font-size: 0.75rem; background: #f8fafc; padding: 0.25rem 0.5rem; border-radius: 4px;">
-                                          "<?= esc($rev['comments']) ?>"
-                                        </div>
-                                      <?php endif; ?>
-                                    </li>
-                                  <?php endforeach; ?>
-                                </ul>
-                              </div>
-                            </details>
-                          <?php endif; ?>
-                        </div>
-                      </div>
-
-                      <!-- Right Reviewer & Status Column -->
-                      <div style="width: 340px; flex-shrink: 0; display: flex; flex-direction: column; gap: 1.25rem; border-left: 1px solid var(--card-border); padding-left: 2rem;">
-                        <!-- Status details and scores if available -->
-                        <?php if ($paper['status'] === 'passed_round2' && isset($paper['presentation_score']) && $paper['presentation_score'] !== null): ?>
-                          <div style="background: rgba(22, 163, 74, 0.05); border: 1px solid rgba(22, 163, 74, 0.15); padding: 0.75rem 1rem; border-radius: var(--radius-sm);">
-                            <span style="font-size: 0.8rem; color: var(--success); font-weight: 600;">📈 คะแนนเฉลี่ยการนำเสนอ</span>
-                            <div style="font-size: 1.5rem; font-weight: bold; color: var(--success); margin-top: 0.1rem;">
-                              <?= number_format($paper['presentation_score'], 2) ?> คะแนน
-                            </div>
-                          </div>
-                        <?php endif; ?>
-
-                        <!-- Reviewers (Round 1) Assignment and status -->
-                        <div>
-                          <div style="font-size: 0.8rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.35rem;">
-                            👤 รายละเอียดผู้ทรงคุณวุฒิ (รอบ 1)
-                          </div>
-
-                          <?php if (empty($assigns)): ?>
-                            <!-- Assignment Form -->
-                            <?php
-                              $paperKeywords = [];
-                              if (!empty($paper['keywords'])) {
-                                  $rawKeywords = explode(',', $paper['keywords']);
-                                  foreach ($rawKeywords as $k) {
-                                      $trimmed = strtolower(trim($k));
-                                      if ($trimmed !== '') {
-                                          $paperKeywords[] = $trimmed;
-                                      }
-                                  }
-                              }
-                            ?>
-                            <form action="<?= base_url('admin/assignReviewers'); ?>" method="POST">
-                              <?= csrf_field(); ?>
-                              <input type="hidden" name="paper_id" value="<?= $paper['id'] ?>">
-                              
-                              <?php for ($i = 1; $i <= 3; $i++): ?>
-                                <div class="form-group mb-1">
-                                  <select name="reviewer_ids[]" class="form-control" style="font-size: 0.8rem; padding: 0.25rem 0.5rem; height: 32px;" required>
-                                    <option value="">เลือกคนที่ <?= $i ?></option>
-                                    <?php foreach ($reviewers as $r): ?>
-                                      <?php
-                                        $rId = $r['id'];
-                                        $rKeywords = isset($reviewerExpertise[$rId]) ? $reviewerExpertise[$rId] : [];
-                                        $matches = array_intersect($paperKeywords, $rKeywords);
-                                        $isMatch = !empty($matches);
-                                        
-                                        // Check affiliation conflict
-                                        $isSameAffiliation = false;
-                                        if (!empty($r['affiliation']) && !empty($paper['author_affiliation'])) {
-                                            $rAff = preg_replace('/\s+/', '', mb_strtolower($r['affiliation']));
-                                            $aAff = preg_replace('/\s+/', '', mb_strtolower($paper['author_affiliation']));
-                                            if ($rAff === $aAff) {
-                                                $isSameAffiliation = true;
-                                            }
-                                        }
-
-                                        $matchText = '';
-                                        if ($isMatch) {
-                                            $matchWords = [];
-                                            foreach ($matches as $m) {
-                                                $matchWords[] = ucwords($m);
-                                            }
-                                            $matchText = ' (Match: ' . implode(', ', $matchWords) . ')';
-                                        }
-
-                                        $affText = $r['affiliation'] ? ' [' . $r['affiliation'] . ']' : ' [ไม่ระบุสถาบัน]';
-                                      ?>
-                                      <option value="<?= $r['id'] ?>" 
-                                              data-uni-conflict="<?= $isSameAffiliation ? 'true' : 'false' ?>"
-                                              <?= $isSameAffiliation ? 'disabled style="color: var(--danger); font-style: italic;"' : ($isMatch ? 'style="color: var(--success); font-weight: 600;"' : '') ?>>
-                                        <?= esc($r['first_name']) ?> <?= esc($r['last_name']) ?><?= esc($affText) ?><?= esc($matchText) ?><?= $isSameAffiliation ? ' ⚠️ สถาบันเดียวกัน' : '' ?>
-                                      </option>
-                                    <?php endforeach; ?>
-                                  </select>
-                                </div>
-                              <?php endfor; ?>
-                              
-                              <button type="submit" class="btn btn-primary btn-sm" style="font-size: 0.75rem; padding: 0.35rem 0.5rem; width: 100%; border-radius: 6px; margin-top: 0.5rem; justify-content: center; height: 32px;">
-                                👤 ส่งให้ผู้ทรง 3 ท่าน
-                              </button>
-                            </form>
-                          <?php else: ?>
-                            <!-- Show reviewer statuses -->
-                            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                              <?php foreach ($assigns as $a): ?>
-                                <div class="reviewer-badge" style="display: block; margin: 0; padding: 0.5rem; background: #ffffff; border: 1px solid var(--card-border); border-radius: var(--radius-sm);">
-                                  <div style="font-weight: 600; font-size: 0.8rem; color: var(--text-primary);">
-                                    👤 <?= esc($a['first_name']) ?> <?= esc($a['last_name']) ?>
-                                  </div>
-                                  <div style="font-size: 0.7rem; color: var(--text-secondary); margin-top: 0.05rem;">
-                                    🏛️ <?= esc($a['affiliation'] ?: 'ไม่ระบุสถาบัน') ?>
-                                  </div>
-                                  <div style="margin-top: 0.25rem; font-size: 0.75rem; display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed var(--card-border); padding-top: 0.2rem;">
-                                    <span class="text-muted" style="font-size: 0.7rem;">ผลประเมิน:</span>
-                                    <?php if ($a['status'] === 'pending'): ?>
-                                      <span style="color: var(--text-secondary); font-weight: 600; font-size: 0.7rem;">⏳ รอการประเมิน</span>
-                                    <?php else: ?>
-                                      <?php if ($a['decision'] === 'pass'): ?>
-                                        <span style="color: var(--success); font-weight: 700; font-size: 0.7rem;">✅ ผ่าน</span>
-                                      <?php elseif ($a['decision'] === 'revision'): ?>
-                                        <span style="color: var(--warning); font-weight: 700; font-size: 0.7rem;">🔧 แก้ไข</span>
-                                      <?php else: ?>
-                                        <span style="color: var(--danger); font-weight: 700; font-size: 0.7rem;">❌ ไม่ผ่าน</span>
-                                      <?php endif; ?>
-                                    <?php endif; ?>
-                                  </div>
-                                </div>
-                              <?php endforeach; ?>
-                            </div>
-                          <?php endif; ?>
-                        </div>
-                      </div>
-                    </div>
-
-                  </div>
-                </div>
-
-              </div>
+                </td>
+                
+                <!-- Reviewers Status -->
+                <td data-search="<?= $reviewerIdsStr ?: 'unassigned' ?>" data-order="<?= $assignedCount ?>">
+                  <?php if ($assignedCount === 0): ?>
+                    <span class="badge" style="background: rgba(220, 38, 38, 0.08); color: var(--danger); font-size: 0.75rem; border: 1px solid rgba(220, 38, 38, 0.15); padding: 0.25rem 0.5rem; font-weight: 600;">
+                      👤❓ ยังไม่มอบหมาย
+                    </span>
+                  <?php elseif ($completedCount < $assignedCount): ?>
+                    <span class="badge" style="background: rgba(217, 119, 6, 0.08); color: var(--warning); font-size: 0.75rem; border: 1px solid rgba(217, 119, 6, 0.15); padding: 0.25rem 0.5rem; font-weight: 600;">
+                      ⏳ ประเมินแล้ว <?= $completedCount ?>/<?= $assignedCount ?> ท่าน
+                    </span>
+                  <?php else: ?>
+                    <span class="badge" style="background: rgba(22, 163, 74, 0.08); color: var(--success); font-size: 0.75rem; border: 1px solid rgba(22, 163, 74, 0.15); padding: 0.25rem 0.5rem; font-weight: 600;">
+                      ✅ ครบ <?= $completedCount ?>/<?= $assignedCount ?> ท่าน
+                    </span>
+                  <?php endif; ?>
+                </td>
+                
+                <!-- Evaluation Status -->
+                <td data-search="<?= $paper['status'] ?>">
+                  <?php if ($paper['status'] === 'submitted'): ?>
+                    <span class="badge badge-pending">รอตรวจ/รอจ่ายเงิน</span>
+                  <?php elseif ($paper['status'] === 'under_review'): ?>
+                    <span class="badge badge-info">กำลังประเมินรอบแรก</span>
+                  <?php elseif ($paper['status'] === 'revision_required'): ?>
+                    <span class="badge badge-pending" style="background: rgba(217, 119, 6, 0.15); color: var(--warning); border: 1px solid var(--warning);">ต้องการแก้ไข</span>
+                  <?php elseif ($paper['status'] === 'revised_submitted'): ?>
+                    <span class="badge badge-info" style="background: rgba(2, 132, 199, 0.15); color: var(--info); border: 1px solid var(--info);">ส่งฉบับแก้ไขแล้ว</span>
+                  <?php elseif ($paper['status'] === 'passed_round1'): ?>
+                    <span class="badge badge-success">ผ่านรอบแรก (รอพรีเซนต์)</span>
+                  <?php elseif ($paper['status'] === 'failed_round1'): ?>
+                    <span class="badge badge-danger">ไม่ผ่านรอบแรก</span>
+                  <?php elseif ($paper['status'] === 'passed_round2'): ?>
+                    <span class="badge badge-success" style="background: rgba(16, 185, 129, 0.3); border: 1px solid var(--success);">เสร็จสิ้นการนำเสนอ</span>
+                  <?php elseif ($paper['status'] === 'failed_round2'): ?>
+                    <span class="badge badge-danger">ไม่ผ่านการนำเสนอ</span>
+                  <?php endif; ?>
+                </td>
+                
+                <!-- Payment Status -->
+                <td data-search="<?= $paper['payment_status'] ?>">
+                  <?php if ($paper['payment_status'] === 'paid'): ?>
+                    <span class="badge badge-success">ชำระเงินแล้ว</span>
+                  <?php elseif ($paper['payment_status'] === 'pending_verification'): ?>
+                    <span class="badge badge-pending">รออนุมัติสลิป</span>
+                  <?php else: ?>
+                    <span class="badge badge-danger">ยังไม่ชำระเงิน</span>
+                  <?php endif; ?>
+                </td>
+                
+                <!-- Actions -->
+                <td style="text-align: center;">
+                  <button type="button" class="btn btn-secondary btn-sm" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; border-radius: 4px; display: inline-flex; align-items: center; gap: 0.25rem;" onclick="event.stopPropagation(); openPaperModal(<?= $paper['id'] ?>)">
+                    🔍 เปิดดู
+                  </button>
+                </td>
+              </tr>
             <?php endforeach; ?>
-          </div>
-        </div>
-      <?php endforeach; ?>
-    <?php endif; ?>
+          </tbody>
+        </table>
+      </div>
+    </div>
 
   </div>
 
+  <!-- Hidden Paper Details for Modal -->
+  <?php foreach ($papers as $paper): ?>
+    <?php 
+      $assigns = $paperAssignments[$paper['id']];
+      $reviewerIdsStr = implode(',', array_map(function($a) { return $a['reviewer_id']; }, $assigns));
+    ?>
+    <div id="paper-details-<?= $paper['id'] ?>" style="display: none;">
+      <!-- Title & Track Badge -->
+      <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; flex-wrap: wrap;">
+        <span class="badge" style="background: rgba(37, 99, 235, 0.1); color: var(--primary); font-weight: 600; font-size: 0.75rem; border: none; padding: 0.2rem 0.6rem;">
+          <?= esc($paper['track_name']) ?> › <?= esc($paper['discipline_name']) ?>
+        </span>
+        <?php if (!empty($paper['keywords'])): ?>
+          <?php foreach (explode(',', $paper['keywords']) as $kw): ?>
+            <?php if (trim($kw) !== ''): ?>
+              <span class="badge" style="background: #f1f5f9; color: var(--text-secondary); font-size: 0.7rem; font-weight: 500; border: 1px solid var(--card-border); padding: 0.15rem 0.5rem;">
+                #<?= esc(trim($kw)) ?>
+              </span>
+            <?php endif; ?>
+          <?php endforeach; ?>
+        <?php endif; ?>
+      </div>
+
+      <h3 style="font-size: 1.35rem; font-weight: 700; color: var(--text-primary); margin-bottom: 1rem; line-height: 1.4;">
+        <?= esc($paper['title']) ?>
+      </h3>
+
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 2rem; flex-wrap: wrap; text-align: left;">
+        <!-- Left Details Column -->
+        <div style="flex: 1; min-width: 300px;">
+          <!-- Author details -->
+          <div style="background: #f8fafc; border: 1px solid var(--card-border); padding: 0.75rem 1rem; border-radius: var(--radius-sm); margin-bottom: 1rem; display: flex; flex-direction: column; gap: 0.35rem;">
+            <div style="font-size: 0.85rem; color: var(--text-secondary);">
+              ผู้เขียน/ผู้ส่งบทความ: <strong style="color: var(--text-primary);"><?= esc($paper['author_first_name']) ?> <?= esc($paper['author_last_name']) ?></strong> 
+              <span class="text-muted">(<?= esc($paper['author_email']) ?>)</span>
+            </div>
+            <div style="font-size: 0.85rem; color: var(--text-secondary);">
+              🏛️ สถาบันสังกัด: <strong style="color: var(--primary);"><?= esc($paper['author_affiliation'] ?: 'ไม่ระบุ') ?></strong>
+            </div>
+          </div>
+
+          <!-- Abstract Collapsible (Always open in modal since we have space, but details look cleaner) -->
+          <div style="margin-bottom: 1rem; border: 1px solid var(--card-border); border-radius: var(--radius-sm); background: #ffffff; padding: 1rem;">
+            <h4 style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem;">📖 บทคัดย่อ (Abstract)</h4>
+            <div style="font-size: 0.9rem; color: var(--text-secondary); white-space: pre-line; line-height: 1.6;">
+              <?= esc($paper['abstract']) ?>
+            </div>
+          </div>
+
+          <!-- PDF Files and Revisions -->
+          <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem;">
+            <a href="<?= base_url($paper['file_path']) ?>" target="_blank" class="btn btn-secondary btn-sm" style="padding: 0.35rem 0.75rem; font-size: 0.8rem; border-radius: 6px;">
+              📖 เปิดอ่าน PDF (ฉบับส่งแรก)
+            </a>
+
+            <?php if (!empty($paperRevisions[$paper['id']])): ?>
+              <div style="width: 100%; margin-top: 1rem; border-top: 1px dashed var(--card-border); padding-top: 1rem;">
+                <h4 style="font-size: 0.85rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-primary);">ประวัติการส่งฉบับแก้ไข:</h4>
+                <ul style="padding-left: 1.25rem; margin: 0; font-size: 0.8rem; list-style-type: disc; color: var(--text-secondary);">
+                  <?php foreach ($paperRevisions[$paper['id']] as $idx => $rev): ?>
+                    <li style="margin-bottom: 0.5rem;">
+                      <a href="<?= base_url($rev['file_path']) ?>" target="_blank" style="font-weight: 600; color: var(--primary);">ฉบับแก้ไข #<?= $idx + 1 ?></a>
+                      <span style="font-size: 0.75rem; color: var(--text-secondary);">(<?= date('d M Y H:i', strtotime($rev['created_at'])) ?>)</span>
+                      <?php if (!empty($rev['comments'])): ?>
+                        <div style="font-style: italic; color: var(--text-secondary); margin-top: 0.15rem; line-height: 1.3; font-size: 0.75rem; background: #f8fafc; padding: 0.25rem 0.5rem; border-radius: 4px;">
+                          "<?= esc($rev['comments']) ?>"
+                        </div>
+                      <?php endif; ?>
+                    </li>
+                  <?php endforeach; ?>
+                </ul>
+              </div>
+            <?php endif; ?>
+          </div>
+        </div>
+
+        <!-- Right Column -->
+        <div style="width: 320px; flex-shrink: 0; display: flex; flex-direction: column; gap: 1.25rem; border-left: 1px solid var(--card-border); padding-left: 1.5rem;">
+          <!-- Statuses & Payment -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 0.5rem;">
+            <div>
+              <div style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.25rem; font-weight: 500;">สถานะประเมิน</div>
+              <?php if ($paper['status'] === 'submitted'): ?>
+                <span class="badge badge-pending">รอตรวจ/รอจ่ายเงิน</span>
+              <?php elseif ($paper['status'] === 'under_review'): ?>
+                <span class="badge badge-info">กำลังประเมินรอบแรก</span>
+              <?php elseif ($paper['status'] === 'revision_required'): ?>
+                <span class="badge badge-pending" style="background: rgba(217, 119, 6, 0.15); color: var(--warning); border: 1px solid var(--warning);">ต้องการแก้ไข</span>
+              <?php elseif ($paper['status'] === 'revised_submitted'): ?>
+                <span class="badge badge-info" style="background: rgba(2, 132, 199, 0.15); color: var(--info); border: 1px solid var(--info);">ส่งฉบับแก้ไขแล้ว</span>
+              <?php elseif ($paper['status'] === 'passed_round1'): ?>
+                <span class="badge badge-success">ผ่านรอบแรก (รอพรีเซนต์)</span>
+              <?php elseif ($paper['status'] === 'failed_round1'): ?>
+                <span class="badge badge-danger">ไม่ผ่านรอบแรก</span>
+              <?php elseif ($paper['status'] === 'passed_round2'): ?>
+                <span class="badge badge-success" style="background: rgba(16, 185, 129, 0.3); border: 1px solid var(--success);">เสร็จสิ้นการนำเสนอ</span>
+                <?php if (isset($paper['presentation_score']) && $paper['presentation_score'] !== null): ?>
+                  <div style="font-size: 0.8rem; font-weight: bold; margin-top: 0.25rem; color: var(--success);">
+                    เฉลี่ย: <?= number_format($paper['presentation_score'], 2) ?> คะแนน
+                  </div>
+                <?php endif; ?>
+              <?php elseif ($paper['status'] === 'failed_round2'): ?>
+                <span class="badge badge-danger">ไม่ผ่านการนำเสนอ</span>
+              <?php endif; ?>
+            </div>
+
+            <div>
+              <div style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.25rem; font-weight: 500;">การชำระเงิน</div>
+              <?php if ($paper['payment_status'] === 'paid'): ?>
+                <span class="badge badge-success">ชำระเงินแล้ว</span>
+              <?php elseif ($paper['payment_status'] === 'pending_verification'): ?>
+                <span class="badge badge-pending">รออนุมัติสลิป</span>
+              <?php else: ?>
+                <span class="badge badge-danger">ยังไม่ชำระเงิน</span>
+              <?php endif; ?>
+            </div>
+          </div>
+
+          <!-- Reviewers (Round 1) -->
+          <div style="border-top: 1px solid var(--card-border); padding-top: 1rem;">
+            <div style="font-size: 0.8rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.35rem;">
+              👤 ผู้ทรงคุณวุฒิประเมิน (รอบ 1)
+            </div>
+
+            <?php if (empty($assigns)): ?>
+              <!-- Assignment Form -->
+              <?php
+                $paperKeywords = [];
+                if (!empty($paper['keywords'])) {
+                    $rawKeywords = explode(',', $paper['keywords']);
+                    foreach ($rawKeywords as $k) {
+                        $trimmed = strtolower(trim($k));
+                        if ($trimmed !== '') {
+                            $paperKeywords[] = $trimmed;
+                        }
+                    }
+                }
+              ?>
+              <form action="<?= base_url('admin/assignReviewers'); ?>" method="POST">
+                <?= csrf_field(); ?>
+                <input type="hidden" name="paper_id" value="<?= $paper['id'] ?>">
+                
+                <?php for ($i = 1; $i <= 3; $i++): ?>
+                  <div class="form-group mb-1">
+                    <select name="reviewer_ids[]" class="form-control" style="font-size: 0.8rem; padding: 0.25rem 0.5rem; height: 32px;" required>
+                      <option value="">เลือกคนที่ <?= $i ?></option>
+                      <?php foreach ($reviewers as $r): ?>
+                        <?php
+                          $rId = $r['id'];
+                          $rKeywords = isset($reviewerExpertise[$rId]) ? $reviewerExpertise[$rId] : [];
+                          $matches = array_intersect($paperKeywords, $rKeywords);
+                          $isMatch = !empty($matches);
+                          
+                          // Check affiliation conflict
+                          $isSameAffiliation = false;
+                          if (!empty($r['affiliation']) && !empty($paper['author_affiliation'])) {
+                              $rAff = preg_replace('/\s+/', '', mb_strtolower($r['affiliation']));
+                              $aAff = preg_replace('/\s+/', '', mb_strtolower($paper['author_affiliation']));
+                              if ($rAff === $aAff) {
+                                  $isSameAffiliation = true;
+                              }
+                          }
+
+                          $matchText = '';
+                          if ($isMatch) {
+                              $matchWords = [];
+                              foreach ($matches as $m) {
+                                  $matchWords[] = ucwords($m);
+                              }
+                              $matchText = ' (Match: ' . implode(', ', $matchWords) . ')';
+                          }
+
+                          $affText = $r['affiliation'] ? ' [' . $r['affiliation'] . ']' : ' [ไม่ระบุสถาบัน]';
+                        ?>
+                        <option value="<?= $r['id'] ?>" 
+                                data-uni-conflict="<?= $isSameAffiliation ? 'true' : 'false' ?>"
+                                <?= $isSameAffiliation ? 'disabled style="color: var(--danger); font-style: italic;"' : ($isMatch ? 'style="color: var(--success); font-weight: 600;"' : '') ?>>
+                          <?= esc($r['first_name']) ?> <?= esc($r['last_name']) ?><?= esc($affText) ?><?= esc($matchText) ?><?= $isSameAffiliation ? ' ⚠️ สถาบันเดียวกัน' : '' ?>
+                        </option>
+                      <?php endforeach; ?>
+                    </select>
+                  </div>
+                <?php endfor; ?>
+                
+                <button type="submit" class="btn btn-primary btn-sm" style="font-size: 0.75rem; padding: 0.35rem 0.5rem; width: 100%; border-radius: 6px; margin-top: 0.5rem; justify-content: center; height: 32px;">
+                  👤 ส่งให้ผู้ทรง 3 ท่าน
+                </button>
+              </form>
+            <?php else: ?>
+              <!-- Show reviewer statuses -->
+              <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                <?php foreach ($assigns as $a): ?>
+                  <div class="reviewer-badge" style="display: block; margin: 0; padding: 0.5rem; background: #ffffff; border: 1px solid var(--card-border); border-radius: var(--radius-sm);">
+                    <div style="font-weight: 600; font-size: 0.8rem; color: var(--text-primary);">
+                      👤 <?= esc($a['first_name']) ?> <?= esc($a['last_name']) ?>
+                    </div>
+                    <div style="font-size: 0.7rem; color: var(--text-secondary); margin-top: 0.05rem;">
+                      🏛️ <?= esc($a['affiliation'] ?: 'ไม่ระบุสถาบัน') ?>
+                    </div>
+                    <div style="margin-top: 0.25rem; font-size: 0.75rem; display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed var(--card-border); padding-top: 0.2rem;">
+                      <span class="text-muted" style="font-size: 0.7rem;">ผลประเมิน:</span>
+                      <?php if ($a['status'] === 'pending'): ?>
+                        <span style="color: var(--text-secondary); font-weight: 600; font-size: 0.7rem;">⏳ รอการประเมิน</span>
+                      <?php else: ?>
+                        <?php if ($a['decision'] === 'pass'): ?>
+                          <span style="color: var(--success); font-weight: 700; font-size: 0.7rem;">✅ ผ่าน</span>
+                        <?php elseif ($a['decision'] === 'revision'): ?>
+                          <span style="color: var(--warning); font-weight: 700; font-size: 0.7rem;">🔧 แก้ไข</span>
+                        <?php else: ?>
+                          <span style="color: var(--danger); font-weight: 700; font-size: 0.7rem;">❌ ไม่ผ่าน</span>
+                        <?php endif; ?>
+                      <?php endif; ?>
+                    </div>
+                  </div>
+                <?php endforeach; ?>
+              </div>
+            <?php endif; ?>
+          </div>
+        </div>
+      </div>
+    </div>
+  <?php endforeach; ?>
+
+  <!-- Paper Detail Modal -->
+  <div id="paper-modal" class="modal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); backdrop-filter: blur(4px);">
+    <div class="modal-content card" style="background-color: #ffffff; margin: 4% auto; padding: 2rem; border: 1px solid var(--card-border); width: 85%; max-width: 950px; border-radius: var(--radius-md); box-shadow: var(--shadow); position: relative; animation: modalFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
+      <span class="close-modal" style="position: absolute; right: 1.5rem; top: 1.5rem; font-size: 1.75rem; font-weight: bold; color: var(--text-secondary); cursor: pointer;" onclick="closePaperModal()">&times;</span>
+      
+      <div id="modal-loading" style="text-align: center; padding: 3rem 0;">
+        <span class="spinner"></span>
+        <div style="margin-top: 0.75rem; color: var(--text-secondary); font-weight: 500;">กำลังโหลดข้อมูลบทความ...</div>
+      </div>
+      
+      <div id="modal-body" style="display: none;">
+        <!-- Dynamic content cloned from hidden divs goes here -->
+      </div>
+    </div>
+  </div>
+
   <script>
-  // Dynamic Accordion Open/Close
-  function toggleAccordion(header) {
-      const item = header.closest('.paper-accordion-item');
-      const content = item.querySelector('.accordion-content');
-      const arrow = item.querySelector('.accordion-arrow');
+  // Open modal with paper details
+  function openPaperModal(paperId) {
+      const detailsHtml = document.getElementById('paper-details-' + paperId).innerHTML;
+      const modalBody = document.getElementById('modal-body');
+      const loading = document.getElementById('modal-loading');
       
-      const isOpen = item.classList.contains('open');
+      loading.style.display = 'block';
+      modalBody.style.display = 'none';
+      document.getElementById('paper-modal').style.display = 'block';
       
-      if (isOpen) {
-          content.style.maxHeight = content.scrollHeight + 'px';
-          // Force reflow
-          content.offsetHeight;
-          content.style.maxHeight = '0';
-          item.classList.remove('open');
-          arrow.style.transform = 'rotate(0deg)';
-      } else {
-          content.style.maxHeight = content.scrollHeight + 'px';
-          item.classList.add('open');
-          arrow.style.transform = 'rotate(90deg)';
+      // Load content smoothly after 150ms
+      setTimeout(() => {
+          modalBody.innerHTML = detailsHtml;
+          loading.style.display = 'none';
+          modalBody.style.display = 'block';
           
-          content.addEventListener('transitionend', function handler() {
-              if (item.classList.contains('open')) {
-                  content.style.maxHeight = 'none';
-              }
-              content.removeEventListener('transitionend', handler);
-          });
-      }
+          // Re-bind the duplicate reviewer validation inside the modal form
+          const modalForm = modalBody.querySelector('form[action*="assignReviewers"]');
+          if (modalForm) {
+              const selects = modalForm.querySelectorAll('select[name="reviewer_ids[]"]');
+              selects.forEach(select => {
+                  select.addEventListener('change', function() {
+                      updateReviewerDropdownOptions(modalForm);
+                  });
+              });
+              // Initial update
+              updateReviewerDropdownOptions(modalForm);
+          }
+      }, 150);
   }
 
+  // Close modal
+  function closePaperModal() {
+      document.getElementById('paper-modal').style.display = 'none';
+      document.getElementById('modal-body').innerHTML = '';
+  }
+
+  // Close when clicking outside of modal content
+  window.addEventListener('click', function(event) {
+      const modal = document.getElementById('paper-modal');
+      if (event.target === modal) {
+          closePaperModal();
+      }
+  });
+
   document.addEventListener('DOMContentLoaded', function() {
+      // Initialize DataTable
+      const table = $('#papers-table').DataTable({
+          language: {
+              url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/th.json'
+          },
+          pageLength: 25,
+          order: [[0, 'asc']], // Order by paper title
+          columnDefs: [
+              { orderable: false, targets: [2, 3, 4, 5] } // Disable sorting on status and actions
+          ]
+      });
+
       const searchInput = document.getElementById('search-input');
       const filterStatus = document.getElementById('filter-status');
       const filterReviewer = document.getElementById('filter-reviewer');
       const btnReset = document.getElementById('btn-reset-filters');
-      const items = document.querySelectorAll('.paper-accordion-item');
-      const trackSections = document.querySelectorAll('.track-group-section');
-      const noResultsBox = document.getElementById('no-results-box');
 
       function applyFilters() {
-          const query = searchInput.value.toLowerCase().trim();
-          const status = filterStatus.value;
-          const reviewer = filterReviewer.value;
-          let visibleCount = 0;
+          // Global Search (Text input)
+          if (searchInput) {
+              table.search(searchInput.value.trim()).draw();
+          }
 
-          // 1. Filter each paper item
-          items.forEach(item => {
-              const title = item.getAttribute('data-title') || '';
-              const authorName = item.getAttribute('data-author-name') || '';
-              const authorAff = item.getAttribute('data-author-affiliation') || '';
-              const keywords = item.getAttribute('data-keywords') || '';
-              const authorEmail = item.getAttribute('data-author-email') || '';
-              const paperStatus = item.getAttribute('data-status') || '';
-              
-              // Reviewer IDs are comma-separated string
-              const reviewerIds = (item.getAttribute('data-reviewers') || '').split(',').filter(id => id !== '');
-
-              // Check search query
-              const matchesSearch = title.includes(query) || 
-                                    authorName.includes(query) || 
-                                    authorAff.includes(query) || 
-                                    authorEmail.includes(query) ||
-                                    keywords.includes(query);
-
-              // Check status filter
-              const matchesStatus = (status === 'all') || (paperStatus === status);
-
-              // Check reviewer filter
-              let matchesReviewer = false;
-              if (reviewer === 'all') {
-                  matchesReviewer = true;
-              } else if (reviewer === 'unassigned') {
-                  matchesReviewer = (reviewerIds.length === 0);
+          // Filter by Status (Column index 3)
+          if (filterStatus) {
+              const statusVal = filterStatus.value;
+              if (statusVal === 'all') {
+                  table.column(3).search('').draw();
               } else {
-                  matchesReviewer = reviewerIds.includes(reviewer);
+                  table.column(3).search('^' + statusVal + '$', true, false).draw();
               }
+          }
 
-              // Set visibility
-              if (matchesSearch && matchesStatus && matchesReviewer) {
-                  item.style.display = '';
-                  visibleCount++;
+          // Filter by Reviewer (Column index 2)
+          if (filterReviewer) {
+              const reviewerVal = filterReviewer.value;
+              if (reviewerVal === 'all') {
+                  table.column(2).search('').draw();
+              } else if (reviewerVal === 'unassigned') {
+                  table.column(2).search('^unassigned$', true, false).draw();
               } else {
-                  item.style.display = 'none';
+                  // Reviewers cell contains comma-separated IDs inside data-search attribute
+                  // Search using regex word-boundary or substring depending on format
+                  table.column(2).search(reviewerVal).draw();
               }
-          });
-
-          // 2. Hide/show track sections based on visible items
-          trackSections.forEach(section => {
-              const sectionItems = section.querySelectorAll('.paper-accordion-item');
-              let sectionVisibleCount = 0;
-              sectionItems.forEach(c => {
-                  if (c.style.display !== 'none') {
-                      sectionVisibleCount++;
-                  }
-              });
-
-              if (sectionVisibleCount > 0) {
-                  section.style.display = '';
-                  // Update badge count dynamically
-                  const badge = section.querySelector('.track-badge-count');
-                  if (badge) {
-                      badge.textContent = sectionVisibleCount + ' บทความ';
-                  }
-              } else {
-                  section.style.display = 'none';
-              }
-          });
-
-          // 3. Show/hide "No results" box
-          if (visibleCount === 0 && items.length > 0) {
-              if (noResultsBox) noResultsBox.style.display = '';
-          } else {
-              if (noResultsBox) noResultsBox.style.display = 'none';
           }
       }
 
-      // Event listeners
-      if (searchInput) searchInput.addEventListener('input', applyFilters);
-      if (filterStatus) filterStatus.addEventListener('change', applyFilters);
-      if (filterReviewer) filterReviewer.addEventListener('change', applyFilters);
+      // Event listeners for DataTable filtering
+      if (searchInput) {
+          searchInput.addEventListener('input', applyFilters);
+      }
+      if (filterStatus) {
+          filterStatus.addEventListener('change', applyFilters);
+      }
+      if (filterReviewer) {
+          filterReviewer.addEventListener('change', applyFilters);
+      }
 
       if (btnReset) {
           btnReset.addEventListener('click', function() {
-              searchInput.value = '';
-              filterStatus.value = 'all';
-              filterReviewer.value = 'all';
-              applyFilters();
+              if (searchInput) searchInput.value = '';
+              if (filterStatus) filterStatus.value = 'all';
+              if (filterReviewer) filterReviewer.value = 'all';
+              table.search('').column(2).search('').column(3).search('').draw();
           });
       }
-
-      // Monitor duplicate reviewer selections in the same assignment form
-      const assignmentForms = document.querySelectorAll('form[action*="assignReviewers"]');
-      assignmentForms.forEach(form => {
-          const selects = form.querySelectorAll('select[name="reviewer_ids[]"]');
-          selects.forEach(select => {
-              select.addEventListener('change', function() {
-                  updateReviewerDropdownOptions(form);
-              });
-          });
-          // Initial update
-          updateReviewerDropdownOptions(form);
-      });
-
-      function updateReviewerDropdownOptions(form) {
-          const selects = form.querySelectorAll('select[name="reviewer_ids[]"]');
-          const selectedValues = Array.from(selects).map(s => s.value).filter(val => val !== '');
-
-          selects.forEach(select => {
-              const currentValue = select.value;
-              const options = select.querySelectorAll('option');
-              options.forEach(opt => {
-                  const optVal = opt.value;
-                  if (optVal === '') return;
-
-                  const hasUniConflict = opt.getAttribute('data-uni-conflict') === 'true';
-                  const isSelectedElsewhere = selectedValues.includes(optVal) && optVal !== currentValue;
-
-                  if (hasUniConflict || isSelectedElsewhere) {
-                      opt.disabled = true;
-                      if (isSelectedElsewhere && !hasUniConflict) {
-                          opt.style.color = 'var(--text-secondary)';
-                          opt.style.fontStyle = 'italic';
-                          if (!opt.textContent.includes(' (เลือกแล้ว)')) {
-                              opt.textContent = opt.textContent + ' (เลือกแล้ว)';
-                          }
-                      }
-                  } else {
-                      opt.disabled = false;
-                      opt.style.color = '';
-                      opt.style.fontStyle = '';
-                      opt.textContent = opt.textContent.replace(' (เลือกแล้ว)', '');
-                  }
-              });
-          });
-      }
-
-      // Run once at start
-      applyFilters();
   });
+
+  // Reused function for duplicate reviewer dropdown validation
+  function updateReviewerDropdownOptions(form) {
+      const selects = form.querySelectorAll('select[name="reviewer_ids[]"]');
+      const selectedValues = Array.from(selects).map(s => s.value).filter(val => val !== '');
+
+      selects.forEach(select => {
+          const currentValue = select.value;
+          const options = select.querySelectorAll('option');
+          options.forEach(opt => {
+              const optVal = opt.value;
+              if (optVal === '') return;
+
+              const hasUniConflict = opt.getAttribute('data-uni-conflict') === 'true';
+              const isSelectedElsewhere = selectedValues.includes(optVal) && optVal !== currentValue;
+
+              if (hasUniConflict || isSelectedElsewhere) {
+                  opt.disabled = true;
+                  if (isSelectedElsewhere && !hasUniConflict) {
+                      opt.style.color = 'var(--text-secondary)';
+                      opt.style.fontStyle = 'italic';
+                      if (!opt.textContent.includes(' (เลือกแล้ว)')) {
+                          opt.textContent = opt.textContent + ' (เลือกแล้ว)';
+                      }
+                  }
+              } else {
+                  opt.disabled = false;
+                  opt.style.color = '';
+                  opt.style.fontStyle = '';
+                  opt.textContent = opt.textContent.replace(' (เลือกแล้ว)', '');
+              }
+          });
+      });
+  }
   </script>
 
 </body>
