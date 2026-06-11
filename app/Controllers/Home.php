@@ -28,6 +28,14 @@ class Home extends BaseController
             echo "Affiliation column check: " . $e->getMessage() . "<br>";
         }
 
+        echo "<h3>Conferences in Database:</h3>";
+        try {
+            $confs = $db->query("SELECT * FROM conferences")->getResultArray();
+            echo "<pre>" . print_r($confs, true) . "</pre>";
+        } catch (\Throwable $e) {
+            echo "Error listing conferences: " . $e->getMessage() . "<br>";
+        }
+
         echo "<h3>Running SimulationSeeder...</h3>";
         try {
             $seeder = \Config\Database::seeder();
