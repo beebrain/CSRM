@@ -285,7 +285,6 @@
     </div>
     <div class="navbar-menu">
       <a href="#about" class="navbar-item">หลักการและเหตุผล</a>
-      <a href="#speakers" class="navbar-item">วิทยากร</a>
       <a href="#tracks" class="navbar-item">ศาสตร์การประชุม</a>
       <a href="#guidelines" class="navbar-item">การส่งบทความ</a>
       <a href="#fees" class="navbar-item">ค่าธรรมเนียมและการตีพิมพ์</a>
@@ -333,38 +332,6 @@
         <p style="text-indent: 2.5rem; line-height: 1.8; text-align: justify;">
           เพื่อเป็นสื่อกลางการบูรณาการวิชาการและการนำไปใช้จริงในระดับประเทศ มหาวิทยาลัยราชภัฏพิบูลสงคราม ร่วมกับเครือข่ายความร่วมมือทางวิชาการจากมหาวิทยาลัยชั้นนำต่างๆ ทั่วประเทศ จึงกำหนดจัดโครงการประชุมวิชาการครั้งนี้ขึ้น เพื่อกระตุ้นให้เกิดเครือข่ายแลกเปลี่ยนความรู้ ยกระดับกระบวนการศึกษา และสร้างนวัตกรรมที่จะขับเคลื่อนการพัฒนาท้องถิ่นและยกระดับขีดความสามารถการแข่งขันของประเทศให้เจริญเติบโตอย่างมั่นคง
         </p>
-      </div>
-    </section>
-
-    <!-- Keynote Speakers Section -->
-    <section id="speakers" class="animate-fade-in" style="animation-delay: 0.3s; margin-top: 4rem;">
-      <h2 class="section-title">🎤 วิทยากรผู้ทรงคุณวุฒิ (Keynote Speakers)</h2>
-      <p class="section-subtitle">ผู้เชี่ยวชาญระดับแนวหน้าที่จะมาแบ่งปันนวัตกรรมและวิสัยทัศน์ทางวิชาการ</p>
-      
-      <div class="speaker-grid">
-        <!-- Speaker 1 -->
-        <div class="speaker-card">
-          <div class="speaker-avatar">👨‍🏫</div>
-          <div class="speaker-name">ศ.ดร. ณรงค์ศักดิ์ สุขประเสริฐ</div>
-          <div class="speaker-title">ศาสตราจารย์สาขาคณิตศาสตร์ประยุกต์</div>
-          <div class="speaker-desc">บรรยายพิเศษในหัวข้อ "คณิตศาสตร์ประยุกต์และวิทยาการข้อมูลยุคใหม่เพื่อความร่วมมือทางวิจัยระดับชาติ"</div>
-        </div>
-        
-        <!-- Speaker 2 -->
-        <div class="speaker-card">
-          <div class="speaker-avatar">👩‍💻</div>
-          <div class="speaker-name">รศ.ดร. นลินี พิบูลพัฒน์</div>
-          <div class="speaker-title">ผู้อำนวยการศูนย์วิจัยนวัตกรรมปัญญาประดิษฐ์</div>
-          <div class="speaker-desc">บรรยายพิเศษในหัวข้อ "บทบาท AI และคอมพิวเตอร์ศาสตร์ในการยกระดับงานวิจัยท้องถิ่นสู่สากล"</div>
-        </div>
-        
-        <!-- Speaker 3 -->
-        <div class="speaker-card">
-          <div class="speaker-avatar">👨‍🔬</div>
-          <div class="speaker-name">ดร. สมชาย มงคลศิลป์</div>
-          <div class="speaker-title">ผู้เชี่ยวชาญอาวุโสด้านเทคโนโลยีสารสนเทศ</div>
-          <div class="speaker-desc">บรรยายพิเศษในหัวข้อ "ทิศทางนวัตกรรมและวิทยาการคำนวณกับการเปลี่ยนผ่านสังคมไทย 5.0"</div>
-        </div>
       </div>
     </section>
 
