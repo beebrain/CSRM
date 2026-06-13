@@ -10,7 +10,7 @@ class ConferenceModel extends Model
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
-    protected $allowedFields    = ['year', 'title', 'host_name', 'description', 'is_active', 'accept_submissions', 'accept_evaluations', 'accept_grading'];
+    protected $allowedFields    = ['year', 'title', 'host_name', 'description', 'is_active', 'accept_submissions', 'accept_evaluations', 'accept_grading', 'default_revision_days'];
     protected $useTimestamps    = true;
     protected $createdField     = 'created_at';
     protected $updatedField     = 'updated_at';

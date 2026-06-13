@@ -24,6 +24,7 @@
       <a href="<?= base_url('admin/criteria'); ?>" class="navbar-item">เกณฑ์ประเมิน</a>
       <a href="<?= base_url('admin/rooms'); ?>" class="navbar-item">จัดห้องพรีเซนต์</a>
       <a href="<?= base_url('admin/payments'); ?>" class="navbar-item active">ยืนยันเงิน</a>
+      <a href="<?= base_url('admin/reports'); ?>" class="navbar-item">รายงานผล</a>
       <?php if (session()->get('role') === 'superadmin'): ?>
         <a href="<?= base_url('superadmin/dashboard'); ?>" class="btn btn-primary btn-sm">⚙️ กลับหน้า SuperAdmin</a>
       <?php endif; ?>

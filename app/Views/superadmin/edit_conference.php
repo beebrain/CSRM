@@ -49,6 +49,11 @@
           <textarea id="description" name="description" class="form-control" rows="3"><?= esc($conference['description']) ?></textarea>
         </div>
 
+        <div class="form-group">
+          <label class="form-label" for="default_revision_days">ระยะเวลาส่งเล่มแก้ไขหลังได้รับแจ้ง (วัน)</label>
+          <input type="number" id="default_revision_days" name="default_revision_days" class="form-control" value="<?= esc($conference['default_revision_days'] ?? 30) ?>" min="1" max="180" required>
+        </div>
+
         <h3 class="mb-2">⚙️ การจัดการช่วงการจัดงาน</h3>
         <p class="text-muted mb-3 text-sm">เปิดหรือปิดการดำเนินการในขั้นตอนต่างๆ ของบทความวิชาการ</p>
 

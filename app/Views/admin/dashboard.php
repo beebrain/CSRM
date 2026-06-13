@@ -28,6 +28,7 @@
       <a href="<?= base_url('admin/criteria'); ?>" class="navbar-item">เกณฑ์ประเมิน</a>
       <a href="<?= base_url('admin/rooms'); ?>" class="navbar-item">จัดห้องพรีเซนต์</a>
       <a href="<?= base_url('admin/payments'); ?>" class="navbar-item">ยืนยันเงิน</a>
+      <a href="<?= base_url('admin/reports'); ?>" class="navbar-item">รายงานผล</a>
       <?php if (session()->get('role') === 'superadmin'): ?>
         <a href="<?= base_url('superadmin/dashboard'); ?>" class="btn btn-primary btn-sm" style="font-size: 0.85rem; padding: 0.5rem 1rem;">⚙️ กลับหน้า SuperAdmin</a>
       <?php endif; ?>
@@ -79,6 +80,149 @@
       <div class="stat-card">
         <div class="text-muted">ยังไม่ชำระเงิน</div>
         <div class="stat-val" style="color: var(--danger);"><?= $stats['unpaid'] ?></div>
+      </div>
+    </div>
+
+    <!-- Detailed Dashboard Tracking (Progress of Papers, Payments & Scoring) -->
+    <div class="card mb-3" style="padding: 1.5rem; background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.95) 100%);">
+      <h3 style="font-size: 1.2rem; margin-bottom: 1.25rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
+        📊 แผงควบคุมและติดตามสถานะงานประชุม (Real-time Progress Tracker)
+      </h3>
+      
+      <div class="grid-3" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem;">
+        
+        <!-- 1. Paper Status Distribution -->
+        <div style="background: rgba(0, 0, 0, 0.01); border: 1px solid var(--card-border); padding: 1rem; border-radius: var(--radius-sm);">
+          <div style="font-weight: 600; font-size: 0.9rem; color: var(--text-primary); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.35rem;">
+            📝 สถานะการยื่นบทความ
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.8rem;">
+            <?php
+              $total = $stats['total_papers'] > 0 ? $stats['total_papers'] : 1;
+              
+              // Count each status directly from papers list
+              $statuses = [
+                  'submitted' => 0,
+                  'under_review' => 0,
+                  'revision_required' => 0,
+                  'revised_submitted' => 0,
+                  'passed_round1' => 0,
+                  'failed_round1' => 0,
+                  'passed_round2' => 0,
+                  'failed_round2' => 0,
+              ];
+              foreach ($papers as $paper) {
+                  if (isset($statuses[$paper['status']])) {
+                      $statuses[$paper['status']]++;
+                  }
+              }
+            ?>
+            <div class="flex justify-between mb-1">
+              <span>รอตรวจ/รอจ่ายเงิน</span>
+              <strong><?= $statuses['submitted'] ?> เรื่อง (<?= round(($statuses['submitted'] / $total) * 100, 1) ?>%)</strong>
+            </div>
+            <div style="background: var(--card-border); height: 6px; border-radius: 3px; overflow: hidden; margin-bottom: 0.5rem;">
+              <div style="background: var(--text-secondary); width: <?= ($statuses['submitted'] / $total) * 100 ?>%; height: 100%;"></div>
+            </div>
+
+            <div class="flex justify-between mb-1">
+              <span>กำลังประเมินรอบแรก</span>
+              <strong><?= $statuses['under_review'] ?> เรื่อง (<?= round(($statuses['under_review'] / $total) * 100, 1) ?>%)</strong>
+            </div>
+            <div style="background: var(--card-border); height: 6px; border-radius: 3px; overflow: hidden; margin-bottom: 0.5rem;">
+              <div style="background: var(--info); width: <?= ($statuses['under_review'] / $total) * 100 ?>%; height: 100%;"></div>
+            </div>
+
+            <div class="flex justify-between mb-1">
+              <span>อยู่ระหว่างการแก้ไข / ส่งแก้ไขแล้ว</span>
+              <strong><?= ($statuses['revision_required'] + $statuses['revised_submitted']) ?> เรื่อง (<?= round((($statuses['revision_required'] + $statuses['revised_submitted']) / $total) * 100, 1) ?>%)</strong>
+            </div>
+            <div style="background: var(--card-border); height: 6px; border-radius: 3px; overflow: hidden; margin-bottom: 0.5rem;">
+              <div style="background: var(--warning); width: <?= (($statuses['revision_required'] + $statuses['revised_submitted']) / $total) * 100 ?>%; height: 100%;"></div>
+            </div>
+
+            <div class="flex justify-between mb-1">
+              <span>ผ่านการนำเสนอและเสร็จสิ้น</span>
+              <strong><?= $statuses['passed_round2'] ?> เรื่อง (<?= round(($statuses['passed_round2'] / $total) * 100, 1) ?>%)</strong>
+            </div>
+            <div style="background: var(--card-border); height: 6px; border-radius: 3px; overflow: hidden;">
+              <div style="background: var(--success); width: <?= ($statuses['passed_round2'] / $total) * 100 ?>%; height: 100%;"></div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 2. Payment Tracking Progress -->
+        <div style="background: rgba(0, 0, 0, 0.01); border: 1px solid var(--card-border); padding: 1rem; border-radius: var(--radius-sm);">
+          <div style="font-weight: 600; font-size: 0.9rem; color: var(--text-primary); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.35rem;">
+            💳 สถานะการชำระเงินค่าลงทะเบียน
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.8rem;">
+            <?php 
+              $paidPct = round(($stats['paid'] / $total) * 100, 1);
+              $unpaidPct = round(($stats['unpaid'] / $total) * 100, 1);
+              $pendingPay = isset($stats['pending_verification_payment']) ? $stats['pending_verification_payment'] : 0;
+              $pendingPayPct = round(($pendingPay / $total) * 100, 1);
+            ?>
+            <div class="flex justify-between mb-1">
+              <span>ชำระเงินเรียบร้อย</span>
+              <strong style="color: var(--success);"><?= $stats['paid'] ?> เรื่อง (<?= $paidPct ?>%)</strong>
+            </div>
+            <div style="background: var(--card-border); height: 6px; border-radius: 3px; overflow: hidden; margin-bottom: 0.75rem;">
+              <div style="background: var(--success); width: <?= ($stats['paid'] / $total) * 100 ?>%; height: 100%;"></div>
+            </div>
+
+            <div class="flex justify-between mb-1">
+              <span>รอแอดมินยืนยันสลิป</span>
+              <strong style="color: var(--info);"><?= $pendingPay ?> เรื่อง (<?= $pendingPayPct ?>%)</strong>
+            </div>
+            <div style="background: var(--card-border); height: 6px; border-radius: 3px; overflow: hidden; margin-bottom: 0.75rem;">
+              <div style="background: var(--info); width: <?= ($pendingPay / $total) * 100 ?>%; height: 100%;"></div>
+            </div>
+
+            <div class="flex justify-between mb-1">
+              <span>ยังไม่ชำระเงิน</span>
+              <strong style="color: var(--danger);"><?= $stats['unpaid'] ?> เรื่อง (<?= $unpaidPct ?>%)</strong>
+            </div>
+            <div style="background: var(--card-border); height: 6px; border-radius: 3px; overflow: hidden;">
+              <div style="background: var(--danger); width: <?= ($stats['unpaid'] / $total) * 100 ?>%; height: 100%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Scoring / Evaluation Progress -->
+        <div style="background: rgba(0, 0, 0, 0.01); border: 1px solid var(--card-border); padding: 1rem; border-radius: var(--radius-sm);">
+          <div style="font-weight: 600; font-size: 0.9rem; color: var(--text-primary); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.35rem;">
+            ✍️ ความคืบหน้าการลงคะแนน (Scoring Progress)
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.8rem; height: 100%; justify-content: center;">
+            <div>
+              <div class="flex justify-between mb-1">
+                <span>ความคืบหน้าการตรวจ Peer Review (รอบแรก)</span>
+                <strong><?= $stats['peer_review_progress'] ?>%</strong>
+              </div>
+              <div style="font-size: 0.7rem; color: var(--text-secondary); margin-bottom: 0.25rem;">
+                ตรวจแล้ว: <?= $stats['peer_review_details'] ?>
+              </div>
+              <div style="background: var(--card-border); height: 8px; border-radius: 4px; overflow: hidden;">
+                <div style="background: linear-gradient(to right, var(--info), var(--primary)); width: <?= $stats['peer_review_progress'] ?>%; height: 100%;"></div>
+              </div>
+            </div>
+
+            <div style="margin-top: 0.25rem;">
+              <div class="flex justify-between mb-1">
+                <span>ความคืบหน้าการประเมินห้องพรีเซนต์ (รอบสอง)</span>
+                <strong><?= $stats['presentation_progress'] ?>%</strong>
+              </div>
+              <div style="font-size: 0.7rem; color: var(--text-secondary); margin-bottom: 0.25rem;">
+                ให้คะแนนแล้ว: <?= $stats['presentation_details'] ?>
+              </div>
+              <div style="background: var(--card-border); height: 8px; border-radius: 4px; overflow: hidden;">
+                <div style="background: linear-gradient(to right, var(--warning), var(--success)); width: <?= $stats['presentation_progress'] ?>%; height: 100%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -284,6 +428,22 @@
             <div style="font-size: 0.85rem; color: var(--text-secondary);">
               🏛️ สถาบันสังกัด: <strong style="color: var(--primary);"><?= esc($paper['author_affiliation'] ?: 'ไม่ระบุ') ?></strong>
             </div>
+            <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.35rem; padding-top: 0.35rem; border-top: 1px dashed var(--card-border); display: flex; align-items: center; gap: 0.5rem;">
+              🔍 ตรวจคัดลอก: 
+              <?php if ($paper['plagiarism_status'] === 'checked'): ?>
+                <span class="badge badge-success" style="font-size: 0.7rem; padding: 0.15rem 0.4rem; text-transform: none; border-radius: 4px;">
+                  ผ่าน (<?= esc($paper['similarity_percent']) ?>%)
+                </span>
+                <a href="<?= esc($paper['plagiarism_report_url']) ?>" target="_blank" style="font-size: 0.75rem; color: var(--info); font-weight: 500; text-decoration: underline;">เปิดรายงาน</a>
+              <?php elseif ($paper['plagiarism_status'] === 'failed'): ?>
+                <span class="badge badge-danger" style="font-size: 0.7rem; padding: 0.15rem 0.4rem; text-transform: none; border-radius: 4px;">
+                  คัดลอกสูง (<?= esc($paper['similarity_percent']) ?>%)
+                </span>
+                <a href="<?= esc($paper['plagiarism_report_url']) ?>" target="_blank" style="font-size: 0.75rem; color: var(--danger); font-weight: 500; text-decoration: underline;">เปิดรายงาน</a>
+              <?php else: ?>
+                <span class="badge badge-pending" style="font-size: 0.7rem; padding: 0.15rem 0.4rem; text-transform: none; border-radius: 4px;">รอการตรวจสอบ</span>
+              <?php endif; ?>
+            </div>
           </div>
 
           <!-- Abstract Collapsible (Always open in modal since we have space, but details look cleaner) -->
@@ -363,6 +523,41 @@
             </div>
           </div>
 
+          <!-- Admin Revision Action (Approve Revision) -->
+          <?php if ($paper['status'] === 'revised_submitted'): ?>
+            <div style="border-top: 1px solid var(--card-border); padding-top: 1rem; margin-bottom: 0.5rem;">
+              <div style="font-size: 0.8rem; font-weight: 700; color: var(--info); margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.25rem;">
+                ⚙️ ดำเนินการผลงานส่งแก้ไข
+              </div>
+              <p style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.5rem; line-height: 1.4;">
+                ผู้ส่งผลงานได้แก้ไขและชี้แจงเรียบร้อยแล้ว แอดมินสามารถอนุมัติผ่านเพื่อนำเข้าห้องนำเสนอได้โดยตรง
+              </p>
+              <a href="<?= base_url('admin/approveRevision/' . $paper['id']) ?>" class="btn btn-primary btn-sm" style="width: 100%; justify-content: center; font-size: 0.8rem; background: var(--info); border-color: var(--info); height: 32px;" onclick="return confirm('ยืนยันที่จะอนุมัติให้บทความนี้ผ่านรอบแรกเพื่อนำเสนอผลงาน?')">
+                ✅ อนุมัติผลงานเข้าห้องพรีเซนต์
+              </a>
+            </div>
+          <?php endif; ?>
+
+          <!-- Admin Deadline Override -->
+          <?php if (in_array($paper['status'], ['revision_required', 'revised_submitted'])): ?>
+            <div style="border-top: 1px solid var(--card-border); padding-top: 1rem; margin-bottom: 0.5rem;">
+              <div style="font-size: 0.8rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.35rem;">
+                ⏱️ กำหนดวันส่งเล่มแก้ไข
+              </div>
+              <div style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
+                กำหนดปัจจุบัน: <strong style="color: var(--warning);"><?= !empty($paper['revision_deadline']) ? date('d/m/Y H:i', strtotime($paper['revision_deadline'])) : 'ไม่ได้กำหนด' ?></strong>
+              </div>
+              <form action="<?= base_url('admin/setRevisionDeadline') ?>" method="POST" style="display: flex; flex-direction: column; gap: 0.35rem;">
+                <?= csrf_field() ?>
+                <input type="hidden" name="paper_id" value="<?= $paper['id'] ?>">
+                <input type="datetime-local" name="revision_deadline" class="form-control" style="font-size: 0.75rem; padding: 0.25rem 0.5rem; height: 32px; font-family: inherit;" value="<?= !empty($paper['revision_deadline']) ? date('Y-m-d\TH:i', strtotime($paper['revision_deadline'])) : '' ?>" required>
+                <button type="submit" class="btn btn-secondary btn-sm" style="font-size: 0.75rem; padding: 0.25rem 0.5rem; height: 32px; justify-content: center; width: 100%;">
+                  🔄 ตั้งกำหนดส่งใหม่
+                </button>
+              </form>
+            </div>
+          <?php endif; ?>
+
           <!-- Reviewers (Round 1) -->
           <div style="border-top: 1px solid var(--card-border); padding-top: 1rem;">
             <div style="font-size: 0.8rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.35rem;">
@@ -421,6 +616,7 @@
                         ?>
                         <option value="<?= $r['id'] ?>" 
                                 data-uni-conflict="<?= $isSameAffiliation ? 'true' : 'false' ?>"
+                                data-affiliation="<?= esc($r['affiliation'] ? preg_replace('/\s+/', '', mb_strtolower($r['affiliation'])) : '') ?>"
                                 <?= $isSameAffiliation ? 'disabled style="color: var(--danger); font-style: italic;"' : ($isMatch ? 'style="color: var(--success); font-weight: 600;"' : '') ?>>
                           <?= esc($r['first_name']) ?> <?= esc($r['last_name']) ?><?= esc($affText) ?><?= esc($matchText) ?><?= $isSameAffiliation ? ' ⚠️ สถาบันเดียวกัน' : '' ?>
                         </option>
@@ -615,9 +811,30 @@
               const hasUniConflict = opt.getAttribute('data-uni-conflict') === 'true';
               const isSelectedElsewhere = selectedValues.includes(optVal) && optVal !== currentValue;
 
-              if (hasUniConflict || isSelectedElsewhere) {
+              // Check if another dropdown has selected a reviewer with the same non-empty affiliation
+              const optAff = opt.getAttribute('data-affiliation');
+              let hasAffiliationConflict = false;
+              if (optAff && optAff !== '') {
+                  selects.forEach(s => {
+                      if (s !== select && s.value !== '') {
+                          const selOpt = s.options[s.selectedIndex];
+                          const aff = selOpt.getAttribute('data-affiliation');
+                          if (aff && aff !== '' && aff === optAff) {
+                              hasAffiliationConflict = true;
+                          }
+                      }
+                  });
+              }
+
+              if (hasUniConflict || isSelectedElsewhere || hasAffiliationConflict) {
                   opt.disabled = true;
-                  if (isSelectedElsewhere && !hasUniConflict) {
+                  if (hasAffiliationConflict && !hasUniConflict && !isSelectedElsewhere) {
+                      opt.style.color = 'var(--danger)';
+                      opt.style.fontStyle = 'italic';
+                      if (!opt.textContent.includes(' ⚠️ สถาบันซ้ำ')) {
+                          opt.textContent = opt.textContent + ' ⚠️ สถาบันซ้ำ';
+                      }
+                  } else if (isSelectedElsewhere && !hasUniConflict) {
                       opt.style.color = 'var(--text-secondary)';
                       opt.style.fontStyle = 'italic';
                       if (!opt.textContent.includes(' (เลือกแล้ว)')) {
@@ -628,7 +845,7 @@
                   opt.disabled = false;
                   opt.style.color = '';
                   opt.style.fontStyle = '';
-                  opt.textContent = opt.textContent.replace(' (เลือกแล้ว)', '');
+                  opt.textContent = opt.textContent.replace(' (เลือกแล้ว)', '').replace(' ⚠️ สถาบันซ้ำ', '');
               }
           });
       });

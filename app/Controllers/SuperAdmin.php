@@ -61,14 +61,15 @@ class SuperAdmin extends BaseController
             $confModel = new ConferenceModel();
             
             $data = [
-                'year'               => $this->request->getPost('year'),
-                'title'              => $this->request->getPost('title'),
-                'host_name'          => $this->request->getPost('host_name'),
-                'description'        => $this->request->getPost('description'),
-                'is_active'          => $this->request->getPost('is_active') ? 1 : 0,
-                'accept_submissions' => 1,
-                'accept_evaluations' => 1,
-                'accept_grading'     => 1
+                'year'                  => $this->request->getPost('year'),
+                'title'                 => $this->request->getPost('title'),
+                'host_name'             => $this->request->getPost('host_name'),
+                'description'           => $this->request->getPost('description'),
+                'is_active'             => $this->request->getPost('is_active') ? 1 : 0,
+                'accept_submissions'    => 1,
+                'accept_evaluations'    => 1,
+                'accept_grading'        => 1,
+                'default_revision_days' => $this->request->getPost('default_revision_days') ?: 30
             ];
 
             // If new conference is set active, deactivate all others
@@ -92,13 +93,14 @@ class SuperAdmin extends BaseController
 
         if ($this->request->is('post')) {
             $data = [
-                'year'               => $this->request->getPost('year'),
-                'title'              => $this->request->getPost('title'),
-                'host_name'          => $this->request->getPost('host_name'),
-                'description'        => $this->request->getPost('description'),
-                'accept_submissions' => $this->request->getPost('accept_submissions') ? 1 : 0,
-                'accept_evaluations' => $this->request->getPost('accept_evaluations') ? 1 : 0,
-                'accept_grading'     => $this->request->getPost('accept_grading') ? 1 : 0
+                'year'                  => $this->request->getPost('year'),
+                'title'                 => $this->request->getPost('title'),
+                'host_name'             => $this->request->getPost('host_name'),
+                'description'           => $this->request->getPost('description'),
+                'accept_submissions'    => $this->request->getPost('accept_submissions') ? 1 : 0,
+                'accept_evaluations'    => $this->request->getPost('accept_evaluations') ? 1 : 0,
+                'accept_grading'        => $this->request->getPost('accept_grading') ? 1 : 0,
+                'default_revision_days' => $this->request->getPost('default_revision_days') ?: 30
             ];
 
             $confModel->update($id, $data);

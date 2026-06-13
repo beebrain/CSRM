@@ -50,6 +50,10 @@ $routes->group('admin', function($routes) {
     $routes->get('payments', 'Admin::payments');
     $routes->get('approvePayment/(:num)', 'Admin::approvePayment/$1');
     $routes->get('rejectPayment/(:num)', 'Admin::rejectPayment/$1');
+    $routes->post('setRevisionDeadline', 'Admin::setRevisionDeadline');
+    $routes->get('approveRevision/(:num)', 'Admin::approveRevision/$1');
+    $routes->post('autoAssignRooms', 'Admin::autoAssignRooms');
+    $routes->get('reports', 'Admin::reports');
 });
 
 // Author Routes

@@ -108,7 +108,7 @@ class Author extends BaseController
             $filePath = 'uploads/papers/' . $newName;
 
             $paperModel = new PaperModel();
-            $paperModel->insert([
+            $paperId = $paperModel->insert([
                 'conference_id'  => $this->activeConf['id'],
                 'title'          => $this->request->getPost('title'),
                 'abstract'       => $this->request->getPost('abstract'),
@@ -119,6 +119,12 @@ class Author extends BaseController
                 'status'         => 'submitted',
                 'payment_status' => 'unpaid'
             ]);
+
+            if ($paperId) {
+                // Trigger plagiarism check simulation
+                $plagService = new \App\Libraries\PlagiarismService();
+                $plagService->checkSimilarity($paperId, $filePath);
+            }
 
             return redirect()->to(base_url('author/dashboard'))->with('success', 'ส่งบทความวิชาการเรียบร้อยแล้ว');
         }
@@ -255,6 +261,14 @@ class Author extends BaseController
                 return redirect()->to(base_url('author/dashboard'))->with('error', 'ไม่พบความต้องการแก้ไขบทความนี้ หรือคุณไม่มีสิทธิ์');
             }
 
+            // Check if deadline has passed
+            if (!empty($paper['revision_deadline'])) {
+                $deadlineTime = strtotime($paper['revision_deadline']);
+                if (time() > $deadlineTime) {
+                    return redirect()->to(base_url('author/dashboard'))->with('error', 'ขออภัย เกินกำหนดเวลาส่งเล่มแก้ไขแล้ว (' . date('d/m/Y H:i', $deadlineTime) . ')');
+                }
+            }
+
             $rules = [
                 'comments' => 'required',
                 'pdf_file' => 'uploaded[pdf_file]|max_size[pdf_file,10240]|ext_in[pdf_file,pdf]'
@@ -279,14 +293,8 @@ class Author extends BaseController
                 'comments'  => $this->request->getPost('comments')
             ]);
 
-            // Update paper status to revised_submitted
-            // Reset reviews status to pending, and clear decisions/comments for a fresh round
+            // Update paper status to revised_submitted (ready for admin approval)
             $db->table('papers')->where('id', $paperId)->update(['status' => 'revised_submitted']);
-            $db->table('paper_reviews')->where('paper_id', $paperId)->update([
-                'status'   => 'pending',
-                'decision' => null,
-                'comments' => null
-            ]);
 
             $db->transComplete();
 

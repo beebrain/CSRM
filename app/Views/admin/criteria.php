@@ -24,6 +24,7 @@
       <a href="<?= base_url('admin/criteria'); ?>" class="navbar-item active">เกณฑ์ประเมิน</a>
       <a href="<?= base_url('admin/rooms'); ?>" class="navbar-item">จัดห้องพรีเซนต์</a>
       <a href="<?= base_url('admin/payments'); ?>" class="navbar-item">ยืนยันเงิน</a>
+      <a href="<?= base_url('admin/reports'); ?>" class="navbar-item">รายงานผล</a>
       <?php if (session()->get('role') === 'superadmin'): ?>
         <a href="<?= base_url('superadmin/dashboard'); ?>" class="btn btn-primary btn-sm">⚙️ กลับหน้า SuperAdmin</a>
       <?php endif; ?>
@@ -237,5 +238,33 @@
 
   </div>
 
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const roundSelect = document.getElementById('round');
+        const maxScoreInput = document.getElementById('max_score');
+
+        function updateMaxScore() {
+            if (roundSelect && maxScoreInput) {
+                if (roundSelect.value == '2') {
+                    maxScoreInput.value = 10;
+                    maxScoreInput.readOnly = true;
+                    maxScoreInput.placeholder = 'คะแนนเต็มถูกกำหนดไว้ที่ 10 คะแนน';
+                } else {
+                    maxScoreInput.readOnly = false;
+                    maxScoreInput.placeholder = 'เช่น 20, 30, 50, 100';
+                    if (maxScoreInput.value == '10') {
+                        maxScoreInput.value = '';
+                    }
+                }
+            }
+        }
+
+        if (roundSelect && maxScoreInput) {
+            roundSelect.addEventListener('change', updateMaxScore);
+            // Initial call
+            updateMaxScore();
+        }
+    });
+  </script>
 </body>
 </html>

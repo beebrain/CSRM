@@ -82,9 +82,15 @@
               </div>
             </div>
 
-            <div class="form-group">
-              <label class="form-label" for="title">หัวข้องานประชุม</label>
-              <input type="text" id="title" name="title" class="form-control" placeholder="เช่น การประชุมคณิตศาสตร์ระดับชาติ ครั้งที่ 1" required>
+            <div class="grid-2">
+              <div class="form-group">
+                <label class="form-label" for="title">หัวข้องานประชุม</label>
+                <input type="text" id="title" name="title" class="form-control" placeholder="เช่น การประชุมคณิตศาสตร์ระดับชาติ ครั้งที่ 1" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="default_revision_days">ระยะเวลาส่งเล่มแก้ไข (วัน)</label>
+                <input type="number" id="default_revision_days" name="default_revision_days" class="form-control" placeholder="30" value="30" min="1" max="180" required>
+              </div>
             </div>
 
             <div class="form-group">

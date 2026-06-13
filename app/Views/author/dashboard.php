@@ -102,19 +102,44 @@
                               <?php endforeach; ?>
                             <?php endif; ?>
                           </ul>
-                          <form action="<?= base_url('author/submitRevision'); ?>" method="POST" enctype="multipart/form-data">
-                            <?= csrf_field(); ?>
-                            <input type="hidden" name="paper_id" value="<?= $paper['id'] ?>">
-                            <div class="form-group mb-2">
-                              <label class="form-label" style="font-size: 0.75rem;" for="comments_<?= $paper['id'] ?>">คำชี้แจงการแก้ไข (Response comments)</label>
-                              <textarea id="comments_<?= $paper['id'] ?>" name="comments" class="form-control" rows="2" placeholder="อธิบายจุดที่ได้แก้ไขตามคอมเมนต์..." required style="font-size: 0.8rem; padding: 0.5rem;"></textarea>
+                          
+                          <?php 
+                            $isOverdue = false;
+                            if (!empty($paper['revision_deadline'])): 
+                              $deadlineTime = strtotime($paper['revision_deadline']);
+                              $isOverdue = time() > $deadlineTime;
+                              $timeLeft = $deadlineTime - time();
+                              $daysLeft = ceil($timeLeft / (60 * 60 * 24));
+                          ?>
+                            <div class="mb-2 text-xs" style="font-weight: 600; color: <?= $isOverdue ? 'var(--danger)' : '#b45309' ?>; background: #fffbeb; padding: 0.35rem 0.5rem; border-radius: 4px; border: 1px solid rgba(217,119,6,0.1); display: inline-flex; align-items: center; gap: 0.35rem;">
+                              ⏱️ กำหนดส่งแก้ไข: <strong><?= date('d/m/Y H:i', $deadlineTime) ?></strong> 
+                              <?php if ($isOverdue): ?>
+                                <span class="badge badge-danger" style="text-transform: none; font-size: 0.7rem; padding: 0.1rem 0.4rem;">⚠️ เลยกำหนดส่ง</span>
+                              <?php else: ?>
+                                <span class="badge badge-pending" style="text-transform: none; font-size: 0.7rem; padding: 0.1rem 0.4rem;">เหลือเวลาอีก <?= $daysLeft ?> วัน</span>
+                              <?php endif; ?>
                             </div>
-                            <div class="form-group mb-2">
-                              <label class="form-label" style="font-size: 0.75rem;" for="rev_file_<?= $paper['id'] ?>">ไฟล์บทความวิชาการฉบับแก้ไข (PDF)</label>
-                              <input type="file" id="rev_file_<?= $paper['id'] ?>" name="pdf_file" class="form-control" accept="application/pdf" required style="font-size: 0.8rem; padding: 0.25rem 0.5rem;">
+                          <?php endif; ?>
+
+                          <?php if ($isOverdue): ?>
+                            <div class="alert alert-danger" style="font-size: 0.8rem; padding: 0.5rem 0.75rem; margin-bottom: 0; margin-top: 0.5rem;">
+                              ⚠️ ไม่สามารถส่งแก้ไขได้เนื่องจากเลยกำหนดเวลาแล้ว กรุณาติดต่อแอดมินเพื่อขยายเวลาส่งเล่มแก้ไข
                             </div>
-                            <button type="submit" class="btn btn-primary btn-sm" style="width: 100%; font-size: 0.8rem; padding: 0.4rem;">🚀 ส่งไฟล์เอกสารฉบับแก้ไข</button>
-                          </form>
+                          <?php else: ?>
+                            <form action="<?= base_url('author/submitRevision'); ?>" method="POST" enctype="multipart/form-data">
+                              <?= csrf_field(); ?>
+                              <input type="hidden" name="paper_id" value="<?= $paper['id'] ?>">
+                              <div class="form-group mb-2">
+                                <label class="form-label" style="font-size: 0.75rem;" for="comments_<?= $paper['id'] ?>">คำชี้แจงการแก้ไข (Response comments)</label>
+                                <textarea id="comments_<?= $paper['id'] ?>" name="comments" class="form-control" rows="2" placeholder="อธิบายจุดที่ได้แก้ไขตามคอมเมนต์..." required style="font-size: 0.8rem; padding: 0.5rem;"></textarea>
+                              </div>
+                              <div class="form-group mb-2">
+                                <label class="form-label" style="font-size: 0.75rem;" for="rev_file_<?= $paper['id'] ?>">ไฟล์บทความวิชาการฉบับแก้ไข (PDF)</label>
+                                <input type="file" id="rev_file_<?= $paper['id'] ?>" name="pdf_file" class="form-control" accept="application/pdf" required style="font-size: 0.8rem; padding: 0.25rem 0.5rem;">
+                              </div>
+                              <button type="submit" class="btn btn-primary btn-sm" style="width: 100%; font-size: 0.8rem; padding: 0.4rem;">🚀 ส่งไฟล์เอกสารฉบับแก้ไข</button>
+                            </form>
+                          <?php endif; ?>
                         </div>
                       <?php endif; ?>
                       <?php if (!empty($presentationComments[$paper['id']])): ?>

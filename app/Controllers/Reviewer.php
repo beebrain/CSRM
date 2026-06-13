@@ -169,7 +169,12 @@ class Reviewer extends BaseController
                     $db->table('papers')->where('id', $review['paper_id'])->update(['status' => 'failed_round1']);
                 } else {
                     // At least one revision vote, or no consensus majority -> Trigger revision
-                    $db->table('papers')->where('id', $review['paper_id'])->update(['status' => 'revision_required']);
+                    $revisionDays = isset($conference['default_revision_days']) ? intval($conference['default_revision_days']) : 30;
+                    $deadline = date('Y-m-d H:i:s', strtotime("+" . $revisionDays . " days"));
+                    $db->table('papers')->where('id', $review['paper_id'])->update([
+                        'status'            => 'revision_required',
+                        'revision_deadline' => $deadline
+                    ]);
                 }
             }
 

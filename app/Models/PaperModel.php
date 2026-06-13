@@ -10,7 +10,7 @@ class PaperModel extends Model
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
-    protected $allowedFields    = ['conference_id', 'title', 'abstract', 'file_path', 'author_id', 'discipline_id', 'status', 'payment_status', 'keywords', 'presentation_score'];
+    protected $allowedFields    = ['conference_id', 'title', 'abstract', 'file_path', 'author_id', 'discipline_id', 'status', 'payment_status', 'keywords', 'presentation_score', 'plagiarism_status', 'similarity_percent', 'plagiarism_report_url', 'revision_deadline'];
     protected $useTimestamps    = true;
     protected $createdField     = 'created_at';
     protected $updatedField     = 'updated_at';

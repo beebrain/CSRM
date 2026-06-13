@@ -24,6 +24,7 @@
       <a href="<?= base_url('admin/criteria'); ?>" class="navbar-item">เกณฑ์ประเมิน</a>
       <a href="<?= base_url('admin/rooms'); ?>" class="navbar-item active">จัดห้องพรีเซนต์</a>
       <a href="<?= base_url('admin/payments'); ?>" class="navbar-item">ยืนยันเงิน</a>
+      <a href="<?= base_url('admin/reports'); ?>" class="navbar-item">รายงานผล</a>
       <?php if (session()->get('role') === 'superadmin'): ?>
         <a href="<?= base_url('superadmin/dashboard'); ?>" class="btn btn-primary btn-sm">⚙️ กลับหน้า SuperAdmin</a>
       <?php endif; ?>
@@ -43,30 +44,51 @@
 
     <div class="grid-3" style="grid-template-columns: 1fr 2fr;">
       
-      <!-- Left: Create Room Form -->
-      <div class="card" style="height: fit-content;">
-        <h2 class="text-2xl">➕ สร้างห้องนำเสนอผลงาน</h2>
-        <p class="text-muted mb-3">สร้างห้องสำหรับเสนอผลงานในรอบที่สอง</p>
+      <!-- Left: Create Room & Auto-Assign Forms -->
+      <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+        <!-- 1. Create Room Card -->
+        <div class="card" style="height: fit-content; margin-bottom: 0;">
+          <h2 class="text-2xl">➕ สร้างห้องนำเสนอผลงาน</h2>
+          <p class="text-muted mb-3">สร้างห้องสำหรับเสนอผลงานในรอบที่สอง</p>
 
-        <form action="<?= base_url('admin/createRoom'); ?>" method="POST">
-          <?= csrf_field(); ?>
-          <div class="form-group">
-            <label class="form-label" for="name">ชื่อห้องนำเสนอ</label>
-            <input type="text" id="name" name="name" class="form-control" placeholder="เช่น ห้อง 1 - พีชคณิต" required>
-          </div>
+          <form action="<?= base_url('admin/createRoom'); ?>" method="POST">
+            <?= csrf_field(); ?>
+            <div class="form-group">
+              <label class="form-label" for="name">ชื่อห้องนำเสนอ</label>
+              <input type="text" id="name" name="name" class="form-control" placeholder="เช่น ห้อง 1 - พีชคณิต" required>
+            </div>
 
-          <div class="form-group">
-            <label class="form-label" for="location">สถานที่ / ลิงก์ออนไลน์</label>
-            <input type="text" id="location" name="location" class="form-control" placeholder="เช่น อาคาร 4 ห้อง 401 หรือ Zoom link" required>
-          </div>
+            <div class="form-group">
+              <label class="form-label" for="location">สถานที่ / ลิงก์ออนไลน์</label>
+              <input type="text" id="location" name="location" class="form-control" placeholder="เช่น อาคาร 4 ห้อง 401 หรือ Zoom link" required>
+            </div>
 
-          <div class="form-group">
-            <label class="form-label" for="date_time">วันและเวลานำเสนอ</label>
-            <input type="datetime-local" id="date_time" name="date_time" class="form-control" required>
-          </div>
+            <div class="form-group">
+              <label class="form-label" for="date_time">วันและเวลานำเสนอ</label>
+              <input type="datetime-local" id="date_time" name="date_time" class="form-control" required>
+            </div>
 
-          <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">สร้างห้อง</button>
-        </form>
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">สร้างห้อง</button>
+          </form>
+        </div>
+
+        <!-- 2. Auto Assign Card -->
+        <div class="card" style="height: fit-content; margin-bottom: 0; background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(168, 85, 247, 0.02) 100%); border: 1px dashed rgba(99, 102, 241, 0.25);">
+          <h2 class="text-2xl" style="color: var(--primary);">🤖 จัดห้องอัตโนมัติตามศาสตร์</h2>
+          <p class="text-muted mb-3" style="font-size: 0.8rem; line-height: 1.4;">ระบบจะสแกนบทความที่ผ่านรอบแรกและยังไม่ได้จัดห้อง จากนั้นจะจำแนกจับกลุ่มตามสาขาศาสตร์และกระจายเข้าแต่ละห้องเฉลี่ยให้สมดุลที่สุด</p>
+
+          <form action="<?= base_url('admin/autoAssignRooms'); ?>" method="POST">
+            <?= csrf_field(); ?>
+            <div class="form-group">
+              <label class="form-label" for="room_count">จำนวนห้องนำเสนอที่ต้องการ</label>
+              <input type="number" id="room_count" name="room_count" class="form-control" placeholder="เช่น 2 หรือ 3" min="1" max="10" required style="font-size: 0.9rem;">
+            </div>
+            
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem; background: linear-gradient(to right, var(--primary), var(--secondary)); border: none; font-weight: bold;" onclick="return confirm('ระบบจะทำการสร้างห้องนำเสนอใหม่ตามศาสตร์และจำนวนห้องที่ระบุ และจัดเรียงบทความให้โดยอัตโนมัติ ยืนยันดำเนินการ?')">
+              ⚡ เริ่มจัดห้องอัตโนมัติ
+            </button>
+          </form>
+        </div>
       </div>
 
       <!-- Right: Rooms Details & Assignments -->
@@ -89,9 +111,17 @@
 
               <div class="grid-2">
                 <!-- 1. Committee Assignment -->
+                <?php 
+                  $commCount = count($roomDetails[$room['id']]['committees']);
+                ?>
                 <div class="assignment-box">
-                  <div class="assignment-title">
+                  <div class="assignment-title" style="display: flex; justify-content: space-between; align-items: center;">
                     <span>👥 กรรมการประจำห้อง</span>
+                    <?php if ($commCount === 3): ?>
+                      <span class="badge badge-success" style="font-size: 0.65rem; padding: 0.1rem 0.4rem; text-transform: none;">ครบ 3 ท่าน</span>
+                    <?php else: ?>
+                      <span class="badge badge-pending" style="font-size: 0.65rem; padding: 0.1rem 0.4rem; text-transform: none; background: rgba(220, 38, 38, 0.08); color: var(--danger); border-color: rgba(220, 38, 38, 0.15);">ยังไม่ครบ (<?= $commCount ?>/3)</span>
+                    <?php endif; ?>
                   </div>
                   
                   <!-- List of assigned committees -->
@@ -102,7 +132,7 @@
                       <?php foreach ($roomDetails[$room['id']]['committees'] as $c): ?>
                         <li class="flex justify-between align-center mb-1 text-sm" style="background: rgba(255, 255, 255, 0.02); padding: 0.25rem 0.5rem; border-radius: 4px;">
                           <div>
-                            <strong><?= esc($c['first_name']) ?></strong>
+                            <strong><?= esc($c['first_name']) ?> <?= esc($c['last_name']) ?></strong>
                             <div class="text-muted text-xs"><?= esc($c['email']) ?></div>
                           </div>
                           <a href="<?= base_url('admin/removeCommittee/' . $c['assignment_id']) ?>" class="text-xs" style="color: var(--danger); font-weight: 600;">ถอน</a>
@@ -112,17 +142,23 @@
                   </ul>
 
                   <!-- Form to assign committee -->
-                  <form action="<?= base_url('admin/assignCommittee'); ?>" method="POST" class="flex gap-1">
-                    <?= csrf_field(); ?>
-                    <input type="hidden" name="room_id" value="<?= $room['id'] ?>">
-                    <select name="committee_id" class="form-control text-xs" style="padding: 0.25rem;" required>
-                      <option value="">+ เลือกกรรมการ</option>
-                      <?php foreach ($committees as $comm): ?>
-                        <option value="<?= $comm['id'] ?>"><?= esc($comm['first_name']) ?></option>
-                      <?php endforeach; ?>
-                    </select>
-                    <button type="submit" class="btn btn-primary btn-sm text-xs" style="padding: 0.25rem 0.5rem;">เพิ่ม</button>
-                  </form>
+                  <?php if ($commCount < 3): ?>
+                    <form action="<?= base_url('admin/assignCommittee'); ?>" method="POST" class="flex gap-1">
+                      <?= csrf_field(); ?>
+                      <input type="hidden" name="room_id" value="<?= $room['id'] ?>">
+                      <select name="committee_id" class="form-control text-xs" style="padding: 0.25rem;" required>
+                        <option value="">+ เลือกกรรมการ</option>
+                        <?php foreach ($committees as $comm): ?>
+                          <option value="<?= $comm['id'] ?>"><?= esc($comm['first_name']) ?> <?= esc($comm['last_name']) ?></option>
+                        <?php endforeach; ?>
+                      </select>
+                      <button type="submit" class="btn btn-primary btn-sm text-xs" style="padding: 0.25rem 0.5rem;">เพิ่ม</button>
+                    </form>
+                  <?php else: ?>
+                    <div class="text-center text-muted text-xs" style="padding: 0.35rem 0; border: 1px dashed var(--card-border); border-radius: 4px; background: rgba(22, 163, 74, 0.03); font-weight: 600;">
+                      ✅ กำหนดกรรมการประจำห้องครบ 3 ท่านแล้ว
+                    </div>
+                  <?php endif; ?>
                 </div>
 
                 <!-- 2. Papers Assignment -->

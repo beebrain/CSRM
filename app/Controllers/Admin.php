@@ -96,6 +96,7 @@ class Admin extends BaseController
         $userModel = new UserModel();
 
         // 1. Statistics
+        $db = \Config\Database::connect();
         $stats = [
             'total_papers' => $paperModel->where('conference_id', $this->currentConfId)->countAllResults(),
             'under_review' => $paperModel->where(['conference_id' => $this->currentConfId, 'status' => 'under_review'])->countAllResults(),
@@ -103,7 +104,33 @@ class Admin extends BaseController
             'passed_round2' => $paperModel->where(['conference_id' => $this->currentConfId, 'status' => 'passed_round2'])->countAllResults(),
             'paid'          => $paperModel->where(['conference_id' => $this->currentConfId, 'payment_status' => 'paid'])->countAllResults(),
             'unpaid'        => $paperModel->where(['conference_id' => $this->currentConfId, 'payment_status' => 'unpaid'])->countAllResults(),
+            'pending_verification_payment' => $paperModel->where(['conference_id' => $this->currentConfId, 'payment_status' => 'pending_verification'])->countAllResults(),
         ];
+
+        // Scoring Progress (Peer Review & Presentation)
+        $totalPeerReviews = $db->table('paper_reviews')
+                               ->join('papers', 'papers.id = paper_reviews.paper_id')
+                               ->where('papers.conference_id', $this->currentConfId)
+                               ->countAllResults();
+        $completedPeerReviews = $db->table('paper_reviews')
+                                  ->join('papers', 'papers.id = paper_reviews.paper_id')
+                                  ->where(['papers.conference_id' => $this->currentConfId, 'paper_reviews.status' => 'completed'])
+                                  ->countAllResults();
+
+        $totalPresReviews = $db->table('presentation_reviews')
+                              ->join('papers', 'papers.id = presentation_reviews.paper_id')
+                              ->where('papers.conference_id', $this->currentConfId)
+                              ->countAllResults();
+        $completedPresReviews = $db->table('presentation_reviews')
+                                 ->join('papers', 'papers.id = presentation_reviews.paper_id')
+                                 ->where(['papers.conference_id' => $this->currentConfId, 'presentation_reviews.status' => 'completed'])
+                                 ->countAllResults();
+
+        $stats['peer_review_progress'] = $totalPeerReviews > 0 ? round(($completedPeerReviews / $totalPeerReviews) * 100, 1) : 0;
+        $stats['peer_review_details'] = "{$completedPeerReviews} / {$totalPeerReviews} รายการ";
+        
+        $stats['presentation_progress'] = $totalPresReviews > 0 ? round(($completedPresReviews / $totalPresReviews) * 100, 1) : 0;
+        $stats['presentation_details'] = "{$completedPresReviews} / {$totalPresReviews} รายการ";
 
         // 2. Papers List with authors
         $papers = $paperModel->getDetails(['papers.conference_id' => $this->currentConfId]);
@@ -237,11 +264,19 @@ class Admin extends BaseController
     {
         if ($this->request->is('post')) {
             $critModel = new CriteriaModel();
+            $round = $this->request->getPost('round');
+            $maxScore = intval($this->request->getPost('max_score'));
+
+            // Force max score of 10 points for Round 2 (Presentation)
+            if ($round == 2) {
+                $maxScore = 10;
+            }
+
             $critModel->insert([
                 'conference_id' => $this->currentConfId,
-                'round'         => $this->request->getPost('round'),
+                'round'         => $round,
                 'criteria_name' => $this->request->getPost('criteria_name'),
-                'max_score'     => $this->request->getPost('max_score'),
+                'max_score'     => $maxScore,
                 'description'   => $this->request->getPost('description')
             ]);
             return redirect()->to(base_url('admin/criteria'))->with('success', 'เพิ่มเกณฑ์ประเมินเรียบร้อยแล้ว');
@@ -376,8 +411,8 @@ class Admin extends BaseController
             $paperId = $this->request->getPost('paper_id');
             $reviewerIds = $this->request->getPost('reviewer_ids'); // Array of 3 reviewers
 
-            if (empty($reviewerIds) || count($reviewerIds) < 3) {
-                return redirect()->to(base_url('admin/dashboard'))->with('error', 'ต้องเลือกผู้ทรงคุณวุฒิอย่างน้อย 3 คน');
+            if (empty($reviewerIds) || count($reviewerIds) !== 3) {
+                return redirect()->to(base_url('admin/dashboard'))->with('error', 'ต้องมอบหมายผู้ทรงคุณวุฒิเป็นจำนวน 3 ท่าน');
             }
 
             // Check duplicate reviewers
@@ -400,14 +435,25 @@ class Admin extends BaseController
             }
 
             $authorAff = !empty($paper['author_affiliation']) ? preg_replace('/\s+/', '', mb_strtolower($paper['author_affiliation'])) : '';
-            if (!empty($authorAff)) {
-                foreach ($reviewerIds as $rId) {
-                    $reviewer = $db->table('users')->where('id', $rId)->get()->getRowArray();
-                    if ($reviewer) {
-                        $revAff = !empty($reviewer['affiliation']) ? preg_replace('/\s+/', '', mb_strtolower($reviewer['affiliation'])) : '';
-                        if ($revAff === $authorAff) {
-                            return redirect()->to(base_url('admin/dashboard'))->with('error', 'ไม่สามารถเลือกผู้ทรงคุณวุฒิจากสถาบันเดียวกันกับผู้แต่งบทความได้: ' . esc($reviewer['first_name']) . ' ' . esc($reviewer['last_name']));
+            
+            // Gather affiliations of reviewers and check conflicts
+            $reviewerAffiliations = [];
+            foreach ($reviewerIds as $rId) {
+                $reviewer = $db->table('users')->where('id', $rId)->get()->getRowArray();
+                if ($reviewer) {
+                    $revAff = !empty($reviewer['affiliation']) ? preg_replace('/\s+/', '', mb_strtolower($reviewer['affiliation'])) : '';
+                    
+                    // COI check with author
+                    if (!empty($authorAff) && !empty($revAff) && $revAff === $authorAff) {
+                        return redirect()->to(base_url('admin/dashboard'))->with('error', 'ไม่สามารถเลือกผู้ทรงคุณวุฒิจากสถาบันเดียวกันกับผู้แต่งบทความได้: ' . esc($reviewer['first_name']) . ' ' . esc($reviewer['last_name']) . ' (สถาบัน: ' . esc($reviewer['affiliation']) . ')');
+                    }
+                    
+                    // COI check among reviewers
+                    if (!empty($revAff)) {
+                        if (in_array($revAff, $reviewerAffiliations)) {
+                            return redirect()->to(base_url('admin/dashboard'))->with('error', 'ไม่สามารถเลือกผู้ทรงคุณวุฒิจากสถาบันเดียวกันซ้ำกันได้: สถาบัน ' . esc($reviewer['affiliation']));
                         }
+                        $reviewerAffiliations[] = $revAff;
                     }
                 }
             }
@@ -510,12 +556,134 @@ class Admin extends BaseController
         return redirect()->to(base_url('admin/rooms'))->with('success', 'ลบห้องนำเสนอเรียบร้อยแล้ว');
     }
 
+    public function autoAssignRooms()
+    {
+        if ($this->request->is('post')) {
+            $db = \Config\Database::connect();
+            $roomCount = intval($this->request->getPost('room_count'));
+            
+            if ($roomCount < 1) {
+                return redirect()->to(base_url('admin/rooms'))->with('error', 'กรุณาระบุจำนวนห้องอย่างน้อย 1 ห้อง');
+            }
+
+            // Find all papers for the current conference with status 'passed_round1' which are NOT assigned to a room
+            $papers = $db->table('papers')
+                         ->select('papers.id as paper_id, papers.discipline_id, disciplines.name as discipline_name')
+                         ->join('disciplines', 'disciplines.id = papers.discipline_id', 'left')
+                         ->where('papers.conference_id', $this->currentConfId)
+                         ->where('papers.status', 'passed_round1')
+                         ->whereNotIn('papers.id', function($builder) {
+                             return $builder->select('paper_id')->from('room_papers');
+                         })
+                         ->get()
+                         ->getResultArray();
+
+            if (empty($papers)) {
+                return redirect()->to(base_url('admin/rooms'))->with('error', 'ไม่มีบทความวิชาการที่ผ่านการประเมินรอบแรกและยังไม่ได้รับการจัดห้องนำเสนอ');
+            }
+
+            // Group papers by discipline_id
+            $papersByDiscipline = [];
+            $disciplineNames = [];
+            foreach ($papers as $p) {
+                $discId = $p['discipline_id'] ?? 0;
+                $papersByDiscipline[$discId][] = $p;
+                $disciplineNames[$discId] = $p['discipline_name'] ?? 'ทั่วไป';
+            }
+
+            // Sort disciplines by count of papers descending
+            uasort($papersByDiscipline, function($a, $b) {
+                return count($b) - count($a);
+            });
+
+            // Initialize rooms buckets
+            $allocatedRooms = [];
+            for ($i = 0; $i < $roomCount; $i++) {
+                $allocatedRooms[$i] = [
+                    'papers'      => [],
+                    'disciplines' => []
+                ];
+            }
+
+            // Distribute disciplines to rooms using a simple greedy load balancing heuristic
+            foreach ($papersByDiscipline as $discId => $discPapers) {
+                // Find room with the smallest current paper count
+                $minRoomIndex = 0;
+                $minPaperCount = count($allocatedRooms[0]['papers']);
+                for ($i = 1; $i < $roomCount; $i++) {
+                    $cnt = count($allocatedRooms[$i]['papers']);
+                    if ($cnt < $minPaperCount) {
+                        $minPaperCount = $cnt;
+                        $minRoomIndex = $i;
+                    }
+                }
+                // Assign all papers of this discipline to the room
+                $allocatedRooms[$minRoomIndex]['papers'] = array_merge($allocatedRooms[$minRoomIndex]['papers'], $discPapers);
+                $allocatedRooms[$minRoomIndex]['disciplines'][] = $disciplineNames[$discId];
+            }
+
+            // Insert allocated rooms and room papers into database
+            $db->transStart();
+            
+            $assignedCount = 0;
+            $createdRooms = 0;
+            foreach ($allocatedRooms as $index => $roomData) {
+                if (empty($roomData['papers'])) {
+                    continue; // Skip creating empty rooms
+                }
+
+                $roomNum = $index + 1;
+                $discListText = implode(', ', array_unique($roomData['disciplines']));
+                
+                // Formulate a nice name
+                $roomName = "ห้องพรีเซนต์อัตโนมัติ {$roomNum} (" . (mb_strlen($discListText) > 40 ? mb_substr($discListText, 0, 40) . '...' : $discListText) . ")";
+                
+                // Create Room
+                $db->table('rooms')->insert([
+                    'conference_id' => $this->currentConfId,
+                    'name'          => $roomName,
+                    'location'      => "อาคารสัมมนา ห้องประเมิน {$roomNum}",
+                    'date_time'     => date('Y-m-d 09:00:00') // Default to 9:00 AM of today or conference default
+                ]);
+                $roomId = $db->insertID();
+                $createdRooms++;
+
+                // Assign papers sequentially with 30-minute intervals
+                $startTime = strtotime('09:00:00');
+                foreach ($roomData['papers'] as $paperIndex => $paper) {
+                    $presTime = date('H:i:s', $startTime + ($paperIndex * 30 * 60));
+                    
+                    $db->table('room_papers')->insert([
+                        'room_id'           => $roomId,
+                        'paper_id'          => $paper['paper_id'],
+                        'presentation_time' => $presTime
+                    ]);
+                    $assignedCount++;
+                }
+            }
+
+            $db->transComplete();
+
+            if ($db->transStatus() === false) {
+                return redirect()->to(base_url('admin/rooms'))->with('error', 'เกิดข้อผิดพลาดในการจัดห้องนำเสนออัตโนมัติ');
+            }
+
+            return redirect()->to(base_url('admin/rooms'))->with('success', "จัดห้องนำเสนออัตโนมัติสำเร็จ! สร้างห้องใหม่ทั้งหมด {$createdRooms} ห้อง และจัดบทความเข้าไป {$assignedCount} เรื่อง");
+        }
+    }
+
     public function assignCommittee()
     {
         if ($this->request->is('post')) {
             $db = \Config\Database::connect();
             $roomId = $this->request->getPost('room_id');
             $commId = $this->request->getPost('committee_id');
+
+            // Count existing committees in this room
+            $currentCount = $db->table('room_committees')->where('room_id', $roomId)->countAllResults();
+            if ($currentCount >= 3) {
+                return redirect()->to(base_url('admin/rooms'))->with('error', 'ห้องนี้มีกรรมการประเมินนำเสนอครบ 3 ท่านแล้ว');
+            }
 
             // Check if already assigned
             $existing = $db->table('room_committees')->where(['room_id' => $roomId, 'committee_id' => $commId])->get()->getRow();
@@ -697,5 +865,116 @@ class Admin extends BaseController
         $db->transComplete();
 
         return redirect()->to(base_url('admin/payments'))->with('success', 'ปฏิเสธการชำระเงินเรียบร้อยแล้ว');
+    }
+
+    public function setRevisionDeadline()
+    {
+        if ($this->request->is('post')) {
+            $paperId = $this->request->getPost('paper_id');
+            $deadline = $this->request->getPost('revision_deadline');
+            
+            $db = \Config\Database::connect();
+            $db->table('papers')->where('id', $paperId)->update([
+                'revision_deadline' => $deadline
+            ]);
+            
+            return redirect()->to(base_url('admin/dashboard'))->with('success', 'ปรับปรุงกำหนดส่งแก้ไขบทความเรียบร้อยแล้ว');
+        }
+    }
+
+    public function approveRevision($paperId)
+    {
+        $db = \Config\Database::connect();
+        
+        $db->table('papers')->where('id', $paperId)->update([
+            'status' => 'passed_round1'
+        ]);
+        
+        return redirect()->to(base_url('admin/dashboard'))->with('success', 'อนุมัติการแก้ไขบทความเรียบร้อยแล้ว บทความนี้ผ่านรอบแรกและพร้อมนำเสนอผลงาน');
+    }
+
+    public function reports()
+    {
+        $paperModel = new PaperModel();
+        $db = \Config\Database::connect();
+
+        // 1. Fetch papers for current conference
+        $papers = $paperModel->getDetails(['papers.conference_id' => $this->currentConfId]);
+
+        // 2. Fetch detailed Round 1 reviews, Revisions, Room details, and Round 2 reviews for each paper
+        $paperAssignments = [];
+        $paperRevisions = [];
+        $presentationSchedules = [];
+        $presentationReviews = [];
+        $criteriaRound1 = $db->table('evaluation_criteria')->where(['conference_id' => $this->currentConfId, 'round' => 1])->get()->getResultArray();
+        $criteriaRound2 = $db->table('evaluation_criteria')->where(['conference_id' => $this->currentConfId, 'round' => 2])->get()->getResultArray();
+
+        foreach ($papers as $p) {
+            $paperId = $p['id'];
+
+            // Round 1 assignments & scores
+            $assigns = $db->table('paper_reviews')
+                          ->select('paper_reviews.*, users.first_name, users.last_name, users.email, users.affiliation')
+                          ->join('users', 'users.id = paper_reviews.reviewer_id')
+                          ->where('paper_id', $paperId)
+                          ->get()
+                          ->getResultArray();
+
+            foreach ($assigns as &$a) {
+                $a['scores'] = $db->table('paper_review_scores')
+                                  ->where('review_id', $a['id'])
+                                  ->get()
+                                  ->getResultArray();
+            }
+            $paperAssignments[$paperId] = $assigns;
+
+            // Revisions
+            $paperRevisions[$paperId] = $db->table('paper_revisions')
+                                           ->where('paper_id', $paperId)
+                                           ->orderBy('created_at', 'ASC')
+                                           ->get()
+                                           ->getResultArray();
+
+            // Presentation Room Schedule
+            $presentationSchedules[$paperId] = $db->table('room_papers')
+                                                  ->select('rooms.name as room_name, rooms.location, rooms.date_time, room_papers.presentation_time')
+                                                  ->join('rooms', 'rooms.id = room_papers.room_id')
+                                                  ->where('paper_id', $paperId)
+                                                  ->get()
+                                                  ->getRowArray();
+
+            // Round 2 presentation reviews & scores
+            $presReviews = $db->table('presentation_reviews')
+                              ->select('presentation_reviews.*, users.first_name, users.last_name, users.email')
+                              ->join('users', 'users.id = presentation_reviews.committee_id')
+                              ->where('paper_id', $paperId)
+                              ->get()
+                              ->getResultArray();
+
+            foreach ($presReviews as &$pr) {
+                $pr['scores'] = $db->table('presentation_review_scores')
+                                   ->where('presentation_review_id', $pr['id'])
+                                   ->get()
+                                   ->getResultArray();
+            }
+            $presentationReviews[$paperId] = $presReviews;
+        }
+
+        // Get conference details
+        $confModel = new ConferenceModel();
+        $selectedConference = $confModel->find($this->currentConfId);
+
+        return view('admin/reports', [
+            'allowedConfs'       => $this->allowedConfs,
+            'currentConfId'      => $this->currentConfId,
+            'selectedConference' => $selectedConference,
+            'papers'             => $papers,
+            'paperAssignments'   => $paperAssignments,
+            'paperRevisions'     => $paperRevisions,
+            'presentationSchedules' => $presentationSchedules,
+            'presentationReviews' => $presentationReviews,
+            'criteriaRound1'     => $criteriaRound1,
+            'criteriaRound2'     => $criteriaRound2
+        ]);
     }
 }
