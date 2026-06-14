@@ -539,20 +539,23 @@ class TestPhase2 extends BaseCommand
 
         // Insert evaluation criteria for Round 2 (Forced to 10 max points)
         $db->table('evaluation_criteria')->where(['conference_id' => $confId, 'round' => 2])->delete();
-        $crit1Id = $db->table('evaluation_criteria')->insert([
+        $db->table('evaluation_criteria')->insert([
             'conference_id' => $confId,
             'round' => 2,
             'criteria_name' => 'Presentation Quality',
             'max_score' => 10,
             'description' => 'Quality of presentation slides and delivery.'
         ]);
-        $crit2Id = $db->table('evaluation_criteria')->insert([
+        $crit1Id = $db->insertID();
+
+        $db->table('evaluation_criteria')->insert([
             'conference_id' => $confId,
             'round' => 2,
             'criteria_name' => 'Q&A Defense',
             'max_score' => 10,
             'description' => 'Ability to answer mathematical questions.'
         ]);
+        $crit2Id = $db->insertID();
 
         // Simulate Committee A scoring (scores <= 10)
         $reviewA = $db->table('presentation_reviews')->where(['paper_id' => $paperId, 'committee_id' => $committeeIds['comma@test.com']])->get()->getRowArray();
