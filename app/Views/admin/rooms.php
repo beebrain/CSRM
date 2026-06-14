@@ -25,6 +25,7 @@
       <a href="<?= base_url('admin/rooms'); ?>" class="navbar-item active">จัดห้องพรีเซนต์</a>
       <a href="<?= base_url('admin/payments'); ?>" class="navbar-item">ยืนยันเงิน</a>
       <a href="<?= base_url('admin/reports'); ?>" class="navbar-item">รายงานผล</a>
+      <a href="<?= base_url('admin/pending-reviews'); ?>" class="navbar-item">ติดตามผู้ทรงฯ</a>
       <?php if (session()->get('role') === 'superadmin'): ?>
         <a href="<?= base_url('superadmin/dashboard'); ?>" class="btn btn-primary btn-sm">⚙️ กลับหน้า SuperAdmin</a>
       <?php endif; ?>

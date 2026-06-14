@@ -54,6 +54,7 @@ $routes->group('admin', function($routes) {
     $routes->get('approveRevision/(:num)', 'Admin::approveRevision/$1');
     $routes->post('autoAssignRooms', 'Admin::autoAssignRooms');
     $routes->get('reports', 'Admin::reports');
+    $routes->get('pending-reviews', 'Admin::pendingReviews');
 });
 
 // Author Routes

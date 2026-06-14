@@ -977,4 +977,48 @@ class Admin extends BaseController
             'criteriaRound2'     => $criteriaRound2
         ]);
     }
+
+    public function pendingReviews()
+    {
+        $db = \Config\Database::connect();
+
+        // 1. Fetch pending peer reviews (Round 1)
+        $pendingPeerReviews = $db->table('paper_reviews')
+                                 ->select('paper_reviews.id as review_id, paper_reviews.created_at as assigned_at, papers.id as paper_id, papers.title as paper_title, papers.status as paper_status, u_rev.first_name as reviewer_first, u_rev.last_name as reviewer_last, u_rev.email as reviewer_email, u_rev.affiliation as reviewer_affiliation, u_auth.first_name as author_first, u_auth.last_name as author_last')
+                                 ->join('papers', 'papers.id = paper_reviews.paper_id')
+                                 ->join('users u_rev', 'u_rev.id = paper_reviews.reviewer_id')
+                                 ->join('users u_auth', 'u_auth.id = papers.author_id')
+                                 ->where('papers.conference_id', $this->currentConfId)
+                                 ->where('paper_reviews.status', 'pending')
+                                 ->orderBy('paper_reviews.created_at', 'ASC')
+                                 ->get()
+                                 ->getResultArray();
+
+        // 2. Fetch pending presentation reviews (Round 2)
+        $pendingPresReviews = $db->table('presentation_reviews')
+                                 ->select('presentation_reviews.id as review_id, presentation_reviews.created_at as assigned_at, papers.id as paper_id, papers.title as paper_title, papers.status as paper_status, u_comm.first_name as committee_first, u_comm.last_name as committee_last, u_comm.email as committee_email, u_comm.affiliation as committee_affiliation, u_auth.first_name as author_first, u_auth.last_name as author_last, rooms.name as room_name')
+                                 ->join('papers', 'papers.id = presentation_reviews.paper_id')
+                                 ->join('users u_comm', 'u_comm.id = presentation_reviews.committee_id')
+                                 ->join('users u_auth', 'u_auth.id = papers.author_id')
+                                 ->leftJoin('room_papers', 'room_papers.paper_id = papers.id')
+                                 ->leftJoin('rooms', 'rooms.id = room_papers.room_id')
+                                 ->where('papers.conference_id', $this->currentConfId)
+                                 ->where('presentation_reviews.status', 'pending')
+                                 ->orderBy('presentation_reviews.created_at', 'ASC')
+                                 ->get()
+                                 ->getResultArray();
+
+        // Get conference details
+        $confModel = new ConferenceModel();
+        $selectedConference = $confModel->find($this->currentConfId);
+
+        return view('admin/pending_reviews', [
+            'allowedConfs'       => $this->allowedConfs,
+            'currentConfId'      => $this->currentConfId,
+            'selectedConference' => $selectedConference,
+            'pendingPeerReviews' => $pendingPeerReviews,
+            'pendingPresReviews' => $pendingPresReviews
+        ]);
+    }
 }
+
