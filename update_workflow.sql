@@ -1,10 +1,11 @@
 -- Update database schema for new assessment workflow
 
--- 1. Add plagiarism columns to papers table
+-- 1. Add plagiarism columns and presentation score to papers table
 ALTER TABLE `papers` 
 ADD COLUMN `plagiarism_status` ENUM('pending', 'checked', 'failed') NOT NULL DEFAULT 'pending',
 ADD COLUMN `similarity_percent` INT DEFAULT NULL,
-ADD COLUMN `plagiarism_report_url` VARCHAR(255) DEFAULT NULL;
+ADD COLUMN `plagiarism_report_url` VARCHAR(255) DEFAULT NULL,
+ADD COLUMN `presentation_score` DECIMAL(5,2) DEFAULT NULL;
 
 -- 2. Add default revision days to conferences table
 ALTER TABLE `conferences`
