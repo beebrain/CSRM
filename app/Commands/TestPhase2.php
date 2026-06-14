@@ -38,9 +38,40 @@ class TestPhase2 extends BaseCommand
         // Cleanup previous test users/papers to be idempotent
         CLI::write("Cleaning up test data...", "yellow");
         $testEmails = ['reva@test.com', 'revb@test.com', 'revc@test.com', 'authorx@test.com', 'comma@test.com', 'commb@test.com', 'commc@test.com', 'commd@test.com'];
+
+        // Get test user IDs
+        $testUsers = $db->table('users')->whereIn('email', $testEmails)->get()->getResultArray();
+        $testUserIds = array_column($testUsers, 'id');
+
+        // Get test paper IDs
+        $testPapers = $db->table('papers')->where('title', 'On the Algebraic Properties of K-Theory')->get()->getResultArray();
+        $testPaperIds = array_column($testPapers, 'id');
+
+        if (!empty($testUserIds)) {
+            $db->table('room_committees')->whereIn('committee_id', $testUserIds)->delete();
+            $db->table('user_expertise')->whereIn('user_id', $testUserIds)->delete();
+        }
+
+        if (!empty($testPaperIds)) {
+            // Delete scores first
+            $presReviews = $db->table('presentation_reviews')->whereIn('paper_id', $testPaperIds)->get()->getResultArray();
+            $presReviewIds = array_column($presReviews, 'id');
+            if (!empty($presReviewIds)) {
+                $db->table('presentation_review_scores')->whereIn('presentation_review_id', $presReviewIds)->delete();
+            }
+            $db->table('presentation_reviews')->whereIn('paper_id', $testPaperIds)->delete();
+            $db->table('room_papers')->whereIn('paper_id', $testPaperIds)->delete();
+            $db->table('paper_reviews')->whereIn('paper_id', $testPaperIds)->delete();
+            $db->table('paper_revisions')->whereIn('paper_id', $testPaperIds)->delete();
+            $db->table('papers')->whereIn('id', $testPaperIds)->delete();
+        }
+
+        // Now safe to delete rooms and users
+        $db->table('rooms')->like('name', 'ห้องพรีเซนต์อัตโนมัติ')->delete();
         $db->table('rooms')->where('name', 'Test Room 1')->delete();
-        $db->table('papers')->where('title', 'On the Algebraic Properties of K-Theory')->delete();
-        $db->table('users')->whereIn('email', $testEmails)->delete();
+        if (!empty($testUserIds)) {
+            $db->table('users')->whereIn('id', $testUserIds)->delete();
+        }
 
         // 2. Register Reviewers with expertise keywords
         CLI::write("\n--- Step 1: Registering Test Reviewers & Keywords ---", "cyan");
